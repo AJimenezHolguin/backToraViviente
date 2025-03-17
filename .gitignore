@@ -1,0 +1,22 @@
+#ignorar node modules
+node_modules
+
+# Ignorar archivos de cobertura (si usas pruebas)
+coverage/
+.nyc_output/
+
+# Ignorar archivos de npm/yarn
+package-lock.json
+yarn.lock
+
+# Ignorar archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Ignorar archivos de entorno (¡muy importantes!)
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+.env.*
