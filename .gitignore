@@ -1,5 +1,5 @@
 #ignorar node modules
-node_modules
+node_modules/
 
 # Ignorar archivos de cobertura (si usas pruebas)
 coverage/
