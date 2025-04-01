@@ -7,7 +7,7 @@ const options = {
     openapi: "3.0.0",
     info: { title: "User API", version: "1.0.0" },
   },
-  apis: ["./src/routes/*.ts"],
+  apis: ["./src/routes/*.ts", "./src/docs/auth/*.yaml"], // Incluye la carpeta donde está login.ts
 };
 
 const swaggerSpec = swaggerJsDoc(options);
