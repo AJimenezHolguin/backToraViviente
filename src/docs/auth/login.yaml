@@ -1,0 +1,61 @@
+swagger: "2.0"
+info:
+  title: "API de Autenticación"
+  description: "API para gestionar el login y registro de usuarios"
+  version: "1.0.0"
+paths:
+  /api/auth/login:
+    post:
+      summary: "Iniciar sesión"
+      description: "Permite a un usuario autenticarse proporcionando su correo electrónico y contraseña."
+      tags:
+        - "Auth"
+      parameters:
+        - in: body
+          name: body
+          description: "Datos de login (email y contraseña)"
+          required: true
+          schema:
+            type: object
+            required:
+              - email
+              - password
+            properties:
+              email:
+                type: string
+                example: "usuario@example.com"
+              password:
+                type: string
+                example: "contraseña123"
+      responses:
+        200:
+          description: "Inicio de sesión exitoso"
+          schema:
+            $ref: '#/definitions/LoginResponse'
+        400:
+          description: "Usuario no encontrado o contraseña incorrecta"
+        500:
+          description: "Error interno del servidor"
+definitions:
+  LoginResponse:
+    type: object
+    properties:
+      token:
+        type: string
+        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwYjhkMjk1ZjlkNDBiMDAxNWE0MmRmOCJ9.qS5hCw4VfHvk5ZmKq6y0ZuygU0h8xtY1vn66REbfPFE"
+      user:
+        type: object
+        properties:
+          id:
+            type: string
+            example: "60b8d295f9d4b40015a42df7"
+          name:
+            type: string
+            example: "Juan Pérez"
+          email:
+            type: string
+            example: "usuario@example.com"
+          role:
+            type: string
+            enum: ["admin", "musician", "user"]
+            example: "user"

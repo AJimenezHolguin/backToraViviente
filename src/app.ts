@@ -1,11 +1,19 @@
-import http from 'http';
+import express from "express";
+import dotenv from "dotenv";
+import cors from "cors";
+import connectDB from "./config/db";
+import userRoutes from "./routes/user.routes";
+import { setupSwagger } from "./docs/swagger";
 
-const server = http.createServer((req, res) => {
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.end('Hola, mundo con TypeScript!\n');
-});
+dotenv.config();
+const app = express();
 
-const PORT = 8080;
-server.listen(PORT, () => {
-console.log(`Servidor corriendo en http://localhost:${PORT}/`);
-});
+app.use(cors());
+app.use(express.json());
+
+connectDB();
+setupSwagger(app);
+app.use("/api", userRoutes);
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`));

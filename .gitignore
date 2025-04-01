@@ -1,22 +1,65 @@
-#ignorar node modules
+# Dependencias de Node
 node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
 
-# Ignorar archivos de cobertura (si usas pruebas)
-coverage/
-.nyc_output/
-
-# Ignorar archivos de npm/yarn
-package-lock.json
-yarn.lock
-
-# Ignorar archivos de sistema
-.DS_Store
-Thumbs.db
-
-# Ignorar archivos de entorno (¡muy importantes!)
+# Archivos de entorno
 .env
 .env.local
 .env.development
-.env.production
 .env.test
-.env.*
+.env.production
+
+# Directorio de compilación
+dist/
+build/
+
+# Configuraciones del IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*.swn
+*.swm
+*.sublime-workspace
+*.sublime-project
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de TypeScript
+*.tsbuildinfo
+
+# Archivos de depuración
+debug.log
+
+# Archivos de MongoDB
+/data/db/
+*.ns
+*.0
+*.1
+*.2
+*.3
+*.4
+*.5
+*.6
+*.7
+*.8
+*.9
+*.lock
+*.wt
+*.siz
+*.metrics
+*.bson
+*.mdb
+*.ldb
+
+# Archivos de cobertura
+coverage/
+.nyc_output/
+
+# Archivos de documentación generados
+docs/api/

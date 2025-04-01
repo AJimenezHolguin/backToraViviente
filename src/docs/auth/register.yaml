@@ -1,0 +1,98 @@
+swagger: "2.0"
+info:
+  title: "API de Autenticación"
+  description: "API para gestionar el login y registro de usuarios"
+  version: "1.0.0"
+paths:
+  /api/auth/register:
+    post:
+      summary: "Registrar un nuevo usuario"
+      description: "Permite registrar un nuevo usuario proporcionando nombre, correo y contraseña."
+      tags:
+        - "Auth"
+      parameters:
+        - in: body
+          name: body
+          description: "Datos de registro del nuevo usuario"
+          required: true
+          schema:
+            type: object
+            required:
+              - name
+              - email
+              - password
+            properties:
+              name:
+                type: string
+                example: "Juan Pérez"
+              email:
+                type: string
+                example: "usuario@example.com"
+              password:
+                type: string
+                example: "contraseña123"
+              role:
+                type: string
+                enum: ["admin", "musician", "user"]
+                default: "user"
+                example: "user"
+      responses:
+        201:
+          description: "Usuario registrado exitosamente"
+          schema:
+            $ref: '#/definitions/RegisterResponse'
+        400:
+          description: "El correo ya está en uso o falta algún campo obligatorio"
+        500:
+          description: "Error interno del servidor"
+definitions:
+  RegisterResponse:
+    type: object
+    properties:
+      message:
+        type: string
+        example: "Usuario registrado exitosamente"
+      user:
+        type: object
+        properties:
+          id:
+            type: string
+            example: "60b8d295f9d4b40015a42df7"
+          name:
+            type: string
+            example: "Juan Pérez"
+          email:
+            type: string
+            example: "usuario@example.com"
+          role:
+            type: string
+            enum: ["admin", "musician", "user"]
+            example: "user"
+          playlists:
+            type: array
+            items:
+              $ref: '#/definitions/Playlist'
+  Playlist:
+    type: object
+    properties:
+      id:
+        type: string
+        example: "60b8d295f9d4b40015a42df8"
+      name:
+        type: string
+        example: "Mi Playlist Favorita"
+      description:
+        type: string
+        example: "Playlist con las mejores canciones para karaoke"
+      status:
+        type: boolean
+        example: true
+      createdBy:
+        type: string
+        example: "60b8d295f9d4b40015a42df7"
+      createdAt:
+        type: string
+        example: "2025-04-01T14:51:54.433Z"
+      updatedAt:
+        type: string
+        example: "2025-04-01T14:51:54.433Z"
