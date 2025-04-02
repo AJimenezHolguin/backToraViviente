@@ -1,6 +1,6 @@
 import { NextFunction, RequestHandler, Request, Response } from "express";
 import User from "../models/user.model";
-import { hashPassword } from "../services/auth.service";
+import { hashPassword, generateToken } from "../services/auth.service";
 import { Roles } from "../types/auth";
 
 export const register: RequestHandler = async (
@@ -11,7 +11,7 @@ export const register: RequestHandler = async (
   try {
     const { name, email, password, role } = req.body;
 
-
+    console.log("Registering user:", { name, email, password, role });
     const validRoles = Object.values(Roles);
     if (role && !validRoles.includes(role)) {
       res.status(400).json({ message: "Rol inválido" });
@@ -33,9 +33,16 @@ export const register: RequestHandler = async (
       password: hashedPassword,
       role: role || "user",  // Si no se pasa rol, el predeterminado es 'user'
     });
-
+    console.log("New user object:", newUser);
     await newUser.save();
-    res.status(201).json({ message: "Usuario registrado exitosamente", user: newUser });
+
+    // Generate token for the new user
+    const token = generateToken(newUser);
+
+    res.status(201).json({
+      user: newUser,
+      token,
+    });
     return;
   } catch (error) {
     res.status(500).json({ message: "Error en el registro", error });
