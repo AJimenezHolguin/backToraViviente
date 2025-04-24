@@ -1,7 +1,7 @@
 import { NextFunction, RequestHandler, Request, Response } from "express";
-import User from "../models/user.model";
-import { hashPassword, generateToken } from "../services/auth.service";
-import { Roles } from "../types/auth";
+import User from "../../models/user.model";
+import { hashPassword, generateToken } from "../../services/auth.service";
+import { Roles } from "../../types/auth";
 
 export const register: RequestHandler = async (
   req: Request,
