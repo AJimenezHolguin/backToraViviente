@@ -1,6 +1,17 @@
 import { NextFunction, RequestHandler, Request, Response } from "express";
+
+// Extend the Request interface to include the user property
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+          role: any; _id: string 
+}; // Adjust the type of user as per your application
+    }
+  }
+}
 import mongoose from "mongoose";
-import Song from "../../models/song.model";
+import songsModel from "../../models/songs.model";
 /**
  * @desc    Crear una nueva canción
  * @route   POST /api/songs
@@ -13,7 +24,9 @@ export const createSong: RequestHandler = async (
 ): Promise<void> => {
   try {
     const { name, fileSong, fileScore, linkSong, category } = req.body;
-    const userId = req.user?._id; // Assuming the auth middleware adds the user
+   // Assuming the auth middleware adds the user
+    const {userId} = req.params; // Cambia esto según cómo estés manejando la autenticación
+    // Si estás usando un middleware de autenticación, el ID del usuario debería estar en req.user._id
 
     // Validaciones básicas
     if (!name) {
@@ -27,7 +40,7 @@ export const createSong: RequestHandler = async (
     }
 
     // Crear la nueva canción
-    const newSong = new Song({
+    const newSong = new songsModel({
       name,
       fileSong: fileSong || undefined,
       fileScore: fileScore || undefined,
@@ -78,8 +91,8 @@ export const getSongs: RequestHandler = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const songs = await Song.find().populate("user", "name email"); // Ajusta los campos según tu modelo User
-    
+    const songs = await songsModel.find().populate("user", "name email"); // Ajusta los campos según tu modelo User
+
     res.status(200).json({
       success: true,
       count: songs.length,
@@ -106,8 +119,7 @@ export const getSongById: RequestHandler = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const song = await Song.findById(req.params.id).populate("user", "name email");
-    
+    const song = await songsModel.findById(req.params.id).populate("user", "name email");
     if (!song) {
       res.status(404).json({
         success: false,
@@ -129,7 +141,7 @@ export const getSongById: RequestHandler = async (
       });
       return;
     }
-    
+
     res.status(500).json({
       success: false,
       message: "Error al obtener la canción",

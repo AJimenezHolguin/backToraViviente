@@ -11,7 +11,6 @@ export const register: RequestHandler = async (
   try {
     const { name, email, password, role } = req.body;
 
-    console.log("Registering user:", { name, email, password, role });
     const validRoles = Object.values(Roles);
     if (role && !validRoles.includes(role)) {
       res.status(400).json({ message: "Rol inválido" });
@@ -33,7 +32,6 @@ export const register: RequestHandler = async (
       password: hashedPassword,
       role: role || "user",  // Si no se pasa rol, el predeterminado es 'user'
     });
-    console.log("New user object:", newUser);
     await newUser.save();
 
     // Generate token for the new user

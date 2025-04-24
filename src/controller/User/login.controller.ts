@@ -1,13 +1,14 @@
 import { RequestHandler } from "express";
-import { comparePasswords, generateToken } from "../services/auth.service";
-import User from "../models/user.model";
+import userModel from "../../models/user.model";
+import { comparePasswords, generateToken } from "../../services/auth.service";
+
 
 export const login: RequestHandler = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
     // Buscar usuario por correo
-    const user = await User.findOne({ email });
+    const user = await userModel.findOne({ email });
     if (!user) {
       res.status(400).json({ message: "Usuario no encontrado" });
       return;
