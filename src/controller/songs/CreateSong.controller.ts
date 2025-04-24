@@ -149,3 +149,51 @@ export const getSongById: RequestHandler = async (
     });
   }
 };
+
+/**
+ * @desc    Obtener todas las canciones creadas por un usuario específico
+ * @route   GET /api/songs/user/:userId
+ * @access  Privado (requiere autenticación)
+ */
+export const getSongsByUser: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { userId } = req.params;
+
+    // Validar que el userId esté presente
+    if (!userId) {
+      res.status(400).json({ message: "El ID del usuario es requerido" });
+      return;
+    }
+
+    // Buscar canciones creadas por el usuario
+    const songs = await songsModel.find({ user: userId }).populate("user", "name email");
+
+    // Verificar si el usuario tiene canciones
+    if (songs.length === 0) {
+      res.status(404).json({
+        success: false,
+        message: "No se encontraron canciones para este usuario",
+      });
+      return;
+    }
+
+    // Respuesta exitosa
+    res.status(200).json({
+      success: true,
+      count: songs.length,
+      data: songs,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: "Error al obtener las canciones del usuario",
+      error: error.message,
+    });
+  }
+};
+
+
