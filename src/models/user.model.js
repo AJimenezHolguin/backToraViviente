@@ -37,6 +37,7 @@ const mongoose_1 = __importStar(require("mongoose"));
 const auth_1 = require("../types/auth");
 const RolesArray = Object.values(auth_1.Roles);
 const UserSchema = new mongoose_1.Schema({
+    id: { type: String, required: true },
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
