@@ -214,7 +214,6 @@ const deleteMySong = async (req, res, next) => {
     try {
         // Obtener el ID del usuario autenticado desde req.user
         const userId = req.user?._id;
-        console.log("User ID:", userId); // Para depuración
         // Validar que el userId esté presente
         // Validar que el usuario esté autenticado
         if (!userId) {
