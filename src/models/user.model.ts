@@ -12,10 +12,12 @@ export interface IUser extends Document {
   createdAt?: Date;
   updatedAt?: Date;
   playlists?: mongoose.Types.ObjectId[];
+  id?: string; // Optional, if you want to use it as a virtual field
 }
 
 
 const UserSchema = new Schema<IUser>({
+  id: { type: String, required: true },
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },

@@ -16,7 +16,7 @@ const authMiddleware = (req, res, next) => {
     }
     try {
         const verified = jsonwebtoken_1.default.verify(token, SECRET_KEY);
-        req.user = verified; // Incluye el ID y el rol del usuario en la solicitud
+        req.user = { _id: verified.id, role: verified.role }; // Incluye el ID y el rol del usuario en la solicitud
         next();
     }
     catch (error) {

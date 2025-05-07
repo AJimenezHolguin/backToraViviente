@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSongsByUser = exports.getSongById = exports.getSongs = exports.createSong = void 0;
+exports.deleteMySong = exports.deleteMySongs = exports.getSongsByUser = exports.getSongById = exports.getSongs = exports.createSong = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const songs_model_1 = __importDefault(require("../../models/songs.model"));
 /**
@@ -14,7 +14,6 @@ const songs_model_1 = __importDefault(require("../../models/songs.model"));
 const createSong = async (req, res, next) => {
     try {
         const { name, fileSong, fileScore, linkSong, category } = req.body;
-        console.log("Request body:", req.body); // Para depuración
         // Assuming the auth middleware adds the user
         const { userId } = req.params; // Cambia esto según cómo estés manejando la autenticación
         // Si estás usando un middleware de autenticación, el ID del usuario debería estar en req.user._id
@@ -135,6 +134,7 @@ exports.getSongById = getSongById;
 const getSongsByUser = async (req, res, next) => {
     try {
         const { userId } = req.params;
+        console.log("User ID:", userId); // Para depuración
         // Validar que el userId esté presente
         if (!userId) {
             res.status(400).json({ message: "El ID del usuario es requerido" });
@@ -166,3 +166,101 @@ const getSongsByUser = async (req, res, next) => {
     }
 };
 exports.getSongsByUser = getSongsByUser;
+/**
+ * @desc    Eliminar todas las canciones creadas por un usuario específico
+ * @route   DELETE /api/songs/mysongs
+ * @access  Privado (requiere autenticación)
+ */
+const deleteMySongs = async (req, res, next) => {
+    try {
+        // Obtener el ID del usuario autenticado desde req.user
+        const userId = req.user?._id;
+        // Validar que el usuario esté autenticado
+        if (!userId) {
+            res.status(401).json({ message: "No autorizado - Usuario no autenticado" });
+            return;
+        }
+        // Eliminar todas las canciones creadas por el usuario
+        const result = await songs_model_1.default.deleteMany({ user: userId });
+        // Verificar si se eliminaron canciones
+        if (result.deletedCount === 0) {
+            res.status(404).json({
+                success: false,
+                message: "No se encontraron canciones para eliminar",
+            });
+            return;
+        }
+        // Respuesta exitosa
+        res.status(200).json({
+            success: true,
+            message: `${result.deletedCount} canciones eliminadas exitosamente`,
+        });
+    }
+    catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Error al eliminar las canciones del usuario",
+            error: error.message,
+        });
+    }
+};
+exports.deleteMySongs = deleteMySongs;
+/**
+ * @desc    Eliminar una canción específica creada por el usuario autenticado
+ * @route   DELETE /api/songs/:id
+ * @access  Privado (requiere autenticación)
+ */
+const deleteMySong = async (req, res, next) => {
+    try {
+        // Obtener el ID del usuario autenticado desde req.user
+        const userId = req.user?._id;
+        // Validar que el userId esté presente
+        // Validar que el usuario esté autenticado
+        if (!userId) {
+            res.status(401).json({ message: "No autorizado - Usuario no autenticado" });
+            return;
+        }
+        // Obtener el ID de la canción desde los parámetros de la solicitud
+        const { id: songId } = req.params;
+        // Buscar la canción por ID
+        const song = await songs_model_1.default.findById(songId);
+        // Validar que la canción exista
+        if (!song) {
+            res.status(404).json({
+                success: false,
+                message: "Canción no encontrada",
+            });
+            return;
+        }
+        // Validar que el usuario autenticado sea el propietario de la canción
+        if (song.user.toString() !== userId) {
+            res.status(403).json({
+                success: false,
+                message: "No tienes permiso para eliminar esta canción",
+            });
+            return;
+        }
+        // Eliminar la canción
+        await song.deleteOne();
+        // Respuesta exitosa
+        res.status(200).json({
+            success: true,
+            message: "Canción eliminada exitosamente",
+        });
+    }
+    catch (error) {
+        if (error instanceof mongoose_1.default.Error.CastError) {
+            res.status(400).json({
+                success: false,
+                message: "ID de canción inválido",
+            });
+            return;
+        }
+        res.status(500).json({
+            success: false,
+            message: "Error al eliminar la canción",
+            error: error.message,
+        });
+    }
+};
+exports.deleteMySong = deleteMySong;

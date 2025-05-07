@@ -13,4 +13,6 @@ const router = (0, express_1.Router)();
 router.post(`/songs/create/:userId`, auth_middleware_1.default, (0, validateRole_1.validateRole)([auth_1.Roles.Admin]), CreateSong_controller_1.createSong);
 router.get(`/songs`, CreateSong_controller_1.getSongs);
 router.get(`/songs/:id`, CreateSong_controller_1.getSongById);
+router.get(`/songs/mysongs/:userId`, auth_middleware_1.default, (0, validateRole_1.validateRole)([auth_1.Roles.Admin]), CreateSong_controller_1.getSongsByUser);
+router.delete(`/songs/:id`, auth_middleware_1.default, (0, validateRole_1.validateRole)([auth_1.Roles.Admin]), CreateSong_controller_1.deleteMySong);
 exports.default = router;

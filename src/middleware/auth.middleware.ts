@@ -22,8 +22,8 @@ const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction): vo
   }
 
   try {
-    const verified = jwt.verify(token, SECRET_KEY) as { _id: string; role: Roles };
-    req.user = verified; // Incluye el ID y el rol del usuario en la solicitud
+    const verified = jwt.verify(token, SECRET_KEY) as { id: string; role: Roles };
+    req.user = { _id: verified.id, role: verified.role }; // Incluye el ID y el rol del usuario en la solicitud
     next();
   } catch (error) {
     res.status(400).json({ message: "Token inválido" });
