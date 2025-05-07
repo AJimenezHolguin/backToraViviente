@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSongById = exports.getSongs = exports.createSong = void 0;
+exports.getSongsByUser = exports.getSongById = exports.getSongs = exports.createSong = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const songs_model_1 = __importDefault(require("../../models/songs.model"));
 /**
@@ -126,3 +126,42 @@ const getSongById = async (req, res, next) => {
     }
 };
 exports.getSongById = getSongById;
+/**
+ * @desc    Obtener todas las canciones creadas por un usuario específico
+ * @route   GET /api/songs/user/:userId
+ * @access  Privado (requiere autenticación)
+ */
+const getSongsByUser = async (req, res, next) => {
+    try {
+        const { userId } = req.params;
+        // Validar que el userId esté presente
+        if (!userId) {
+            res.status(400).json({ message: "El ID del usuario es requerido" });
+            return;
+        }
+        // Buscar canciones creadas por el usuario
+        const songs = await songs_model_1.default.find({ user: userId }).populate("user", "name email");
+        // Verificar si el usuario tiene canciones
+        if (songs.length === 0) {
+            res.status(404).json({
+                success: false,
+                message: "No se encontraron canciones para este usuario",
+            });
+            return;
+        }
+        // Respuesta exitosa
+        res.status(200).json({
+            success: true,
+            count: songs.length,
+            data: songs,
+        });
+    }
+    catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Error al obtener las canciones del usuario",
+            error: error.message,
+        });
+    }
+};
+exports.getSongsByUser = getSongsByUser;
