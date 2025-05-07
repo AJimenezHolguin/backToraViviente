@@ -14,6 +14,7 @@ const songs_model_1 = __importDefault(require("../../models/songs.model"));
 const createSong = async (req, res, next) => {
     try {
         const { name, fileSong, fileScore, linkSong, category } = req.body;
+        console.log("Request body:", req.body); // Para depuración
         // Assuming the auth middleware adds the user
         const { userId } = req.params; // Cambia esto según cómo estés manejando la autenticación
         // Si estás usando un middleware de autenticación, el ID del usuario debería estar en req.user._id

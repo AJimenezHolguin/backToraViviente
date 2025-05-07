@@ -10,6 +10,7 @@ const auth_1 = require("../../types/auth");
 const register = async (req, res, next) => {
     try {
         const { name, email, password, role } = req.body;
+        console.log("Registering user:", { name, email, password, role });
         const validRoles = Object.values(auth_1.Roles);
         if (role && !validRoles.includes(role)) {
             res.status(400).json({ message: "Rol inválido" });
