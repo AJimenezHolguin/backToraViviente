@@ -3,8 +3,12 @@ import mongoose, { Document, Schema } from "mongoose";
 // Interfaz Song
 export interface ISong extends Document {
   name: string;
-  fileSong?: string;  // Archivo de la canción
-  fileScore?: string;  // Partitura (para músicos)
+  fileSong?: {
+    public_id: string; secure_url: string
+  };  // Archivo de la canción
+  fileScore?: {
+    public_id: string; secure_url: string
+  };  // Partitura (para músicos)
   linkSong?: string;  // Enlace a la canción
   createdAt: Date;
   updatedAt: Date;
@@ -18,10 +22,10 @@ const SongSchema = new Schema<ISong>({
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   user: { type: Schema.Types.ObjectId, ref: "User", required: true },  // El usuario administrador
-  fileSong: { type: String },  // Puede ser la URL de la canción
-  fileScore: { type: String },  // Partitura (si es para músico)
+  fileSong: { type: {} },  // Puede ser la URL de la canción
+  fileScore: { type: {} },  // Partitura (si es para músico)
   linkSong: { type: String },  // Enlace a la canción
-  category: {  type: String },  // Categoría de la canción (opcional)
+  category: { type: String },  // Categoría de la canción (opcional)
 });
 
 export default mongoose.model<ISong>("Song", SongSchema);

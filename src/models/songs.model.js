@@ -40,8 +40,8 @@ const SongSchema = new mongoose_1.Schema({
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
     user: { type: mongoose_1.Schema.Types.ObjectId, ref: "User", required: true }, // El usuario administrador
-    fileSong: { type: String }, // Puede ser la URL de la canción
-    fileScore: { type: String }, // Partitura (si es para músico)
+    fileSong: { type: {} }, // Puede ser la URL de la canción
+    fileScore: { type: {} }, // Partitura (si es para músico)
     linkSong: { type: String }, // Enlace a la canción
     category: { type: String }, // Categoría de la canción (opcional)
 });

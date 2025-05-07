@@ -5,8 +5,8 @@ declare global {
   namespace Express {
     interface Request {
       user?: {
-          role: any; _id: string 
-}; // Adjust the type of user as per your application
+        role: any; _id: string
+      }; // Adjust the type of user as per your application
     }
   }
 }
@@ -24,8 +24,10 @@ export const createSong: RequestHandler = async (
 ): Promise<void> => {
   try {
     const { name, fileSong, fileScore, linkSong, category } = req.body;
-   // Assuming the auth middleware adds the user
-    const {userId} = req.params; // Cambia esto según cómo estés manejando la autenticación
+    console.log("Request body:", req.body); // Para depuración
+    
+    // Assuming the auth middleware adds the user
+    const { userId } = req.params; // Cambia esto según cómo estés manejando la autenticación
     // Si estás usando un middleware de autenticación, el ID del usuario debería estar en req.user._id
 
     // Validaciones básicas
