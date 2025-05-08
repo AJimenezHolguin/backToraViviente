@@ -162,7 +162,6 @@ export const getSongsByUser: RequestHandler = async (
 ): Promise<void> => {
   try {
     const { userId } = req.params;
-    console.log("User ID:", userId); // Para depuración
     // Validar que el userId esté presente
     if (!userId) {
       res.status(400).json({ message: "El ID del usuario es requerido" });
@@ -306,6 +305,85 @@ export const deleteMySong: RequestHandler = async (
     res.status(500).json({
       success: false,
       message: "Error al eliminar la canción",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * @desc    Actualizar una canción específica creada por el usuario autenticado
+ * @route   PUT /api/songs/:id
+ * @access  Privado (requiere autenticación)
+ */
+export const updateMySong: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    // Obtener el ID del usuario autenticado desde req.user
+    const userId = req.user?._id;
+
+    // Validar que el usuario esté autenticado
+    if (!userId) {
+      res.status(401).json({ message: "No autorizado - Usuario no autenticado" });
+      return;
+    }
+
+    // Obtener el ID de la canción desde los parámetros de la solicitud
+    const { id: songId } = req.params;
+
+    // Buscar la canción por ID
+    const song = await songsModel.findById(songId);
+
+    // Validar que la canción exista
+    if (!song) {
+      res.status(404).json({
+        success: false,
+        message: "Canción no encontrada",
+      });
+      return;
+    }
+
+    // Validar que el usuario autenticado sea el propietario de la canción
+    if (song.user.toString() !== userId) {
+      res.status(403).json({
+        success: false,
+        message: "No tienes permiso para actualizar esta canción",
+      });
+      return;
+    }
+
+    // Actualizar los campos de la canción
+    const { name, fileSong, fileScore, linkSong, category } = req.body;
+
+    if (name) song.name = name;
+    if (fileSong) song.fileSong = fileSong;
+    if (fileScore) song.fileScore = fileScore;
+    if (linkSong) song.linkSong = linkSong;
+    if (category) song.category = category;
+
+    // Guardar los cambios en la base de datos
+    const updatedSong = await song.save();
+
+    // Respuesta exitosa
+    res.status(200).json({
+      success: true,
+      message: "Canción actualizada exitosamente",
+      data: updatedSong,
+    });
+  } catch (error: any) {
+    if (error instanceof mongoose.Error.CastError) {
+      res.status(400).json({
+        success: false,
+        message: "ID de canción inválido",
+      });
+      return;
+    }
+
+    res.status(500).json({
+      success: false,
+      message: "Error al actualizar la canción",
       error: error.message,
     });
   }
