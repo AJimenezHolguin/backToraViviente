@@ -10,7 +10,6 @@ export const register: RequestHandler = async (
 ): Promise<void> => {
   try {
     const { name, email, password, role } = req.body;
-    console.log("Registering user:", { name, email, password, role });
     const validRoles = Object.values(Roles);
     if (role && !validRoles.includes(role)) {
       res.status(400).json({ message: "Rol inválido" });

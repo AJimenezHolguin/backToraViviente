@@ -162,7 +162,6 @@ export const getSongsByUser: RequestHandler = async (
 ): Promise<void> => {
   try {
     const { userId } = req.params;
-    console.log("User ID:", userId); // Para depuración
     // Validar que el userId esté presente
     if (!userId) {
       res.status(400).json({ message: "El ID del usuario es requerido" });

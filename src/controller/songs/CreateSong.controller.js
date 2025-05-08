@@ -134,7 +134,6 @@ exports.getSongById = getSongById;
 const getSongsByUser = async (req, res, next) => {
     try {
         const { userId } = req.params;
-        console.log("User ID:", userId); // Para depuración
         // Validar que el userId esté presente
         if (!userId) {
             res.status(400).json({ message: "El ID del usuario es requerido" });

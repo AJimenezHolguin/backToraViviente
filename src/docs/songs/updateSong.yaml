@@ -1,0 +1,174 @@
+paths:
+  /api/songs/{id}:
+    put:
+      summary: Actualizar una canción específica
+      description: Permite a un usuario autenticado actualizar una canción que le pertenece.
+      tags:
+        - Canciones
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID de la canción a actualizar.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Nombre de la canción.
+                  example: "Nuevo nombre de la canción"
+                fileSong:
+                  type: object
+                  description: Archivo de la canción.
+                  properties:
+                    public_id:
+                      type: string
+                      description: ID público del archivo.
+                      example: "nuevo_public_id"
+                    secure_url:
+                      type: string
+                      description: URL segura del archivo.
+                      example: "https://example.com/nueva_cancion.mp3"
+                fileScore:
+                  type: object
+                  description: Archivo de la partitura.
+                  properties:
+                    public_id:
+                      type: string
+                      description: ID público de la partitura.
+                      example: "nuevo_public_id_partitura"
+                    secure_url:
+                      type: string
+                      description: URL segura de la partitura.
+                      example: "https://example.com/nueva_partitura.pdf"
+                linkSong:
+                  type: string
+                  description: Enlace a la canción (por ejemplo, YouTube).
+                  example: "https://www.youtube.com/watch?v=example"
+                category:
+                  type: string
+                  description: Categoría de la canción.
+                  example: "Adoración"
+      responses:
+        '200':
+          description: Canción actualizada exitosamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Canción actualizada exitosamente"
+                  data:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        example: "681b7ed10408acabf8288224"
+                      name:
+                        type: string
+                        example: "Nuevo nombre de la canción"
+                      fileSong:
+                        type: object
+                        properties:
+                          public_id:
+                            type: string
+                            example: "nuevo_public_id"
+                          secure_url:
+                            type: string
+                            example: "https://example.com/nueva_cancion.mp3"
+                      fileScore:
+                        type: object
+                        properties:
+                          public_id:
+                            type: string
+                            example: "nuevo_public_id_partitura"
+                          secure_url:
+                            type: string
+                            example: "https://example.com/nueva_partitura.pdf"
+                      linkSong:
+                        type: string
+                        example: "https://www.youtube.com/watch?v=example"
+                      category:
+                        type: string
+                        example: "Adoración"
+                      user:
+                        type: string
+                        example: "681508c2d30979ef019ce9c5"
+                      createdAt:
+                        type: string
+                        format: date-time
+                        example: "2025-05-07T15:40:02.006Z"
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        example: "2025-05-07T15:40:02.007Z"
+                      __v:
+                        type: integer
+                        example: 0
+        '403':
+          description: No tienes permiso para actualizar esta canción.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "No tienes permiso para actualizar esta canción"
+        '404':
+          description: Canción no encontrada.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Canción no encontrada"
+        '400':
+          description: ID de canción inválido.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "ID de canción inválido"
+        '500':
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Error al actualizar la canción"
+                  error:
+                    type: string
+                    example: "Detalles del error"
+

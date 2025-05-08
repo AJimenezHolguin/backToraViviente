@@ -5,9 +5,9 @@ import { Express } from "express";
 const options = {
   definition: {
     openapi: "3.0.0",
-    info: { title: "User API", version: "1.0.0" },
+    info: { title: "Tora Viviente API", version: "1.0.0" },
   },
-  apis: ["./src/routes/*.ts", "./src/docs/auth/*.yaml"], // Incluye la carpeta donde está login.ts
+  apis: ["./src/routes/*.ts", "./src/docs/**/*.yaml"], // Incluye el archivo YAML
 };
 
 const swaggerSpec = swaggerJsDoc(options);
