@@ -1,0 +1,96 @@
+paths:
+  /auth/login:
+    post:
+      summary: Login a user
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: User's email address
+                password:
+                  type: string
+                  description: User's password
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: User logged in successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: Authentication token
+                  user:
+                    $ref: '#/components/schemas/UserLoginResponse'
+                required:
+                  - token
+                  - user
+        '400':
+          description: Bad request (e.g., user not found, incorrect password)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Error message
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Error message
+                  error:
+                    type: object
+                    description: Error details
+components:
+  schemas:
+    UserLoginResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: User ID
+        email:
+          type: string
+          format: email
+          description: User's email address
+        role:
+          type: string
+          description: User's role
+        playlists:
+          type: array
+          items:
+            type: string
+            description: Playlist ID
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+        updatedAt:
+          type: string
+          format: date-time
+          description: Update timestamp
+      required:
+        - id
+        - email
+        - role
+        - createdAt
+        - updatedAt
