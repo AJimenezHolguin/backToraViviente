@@ -1,0 +1,95 @@
+paths:
+  /api/songs:
+    get:
+      summary: Obtener todas las canciones
+      description: Devuelve una lista de todas las canciones disponibles.
+      tags:
+        - Canciones
+      responses:
+        '200':
+          description: Lista de canciones obtenida exitosamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  count:
+                    type: integer
+                    example: 9
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                          example: "681b7ed10408acabf8288224"
+                        name:
+                          type: string
+                          example: "Como el ciervo"
+                        user:
+                          type: object
+                          properties:
+                            _id:
+                              type: string
+                              example: "681508c2d30979ef019ce9c5"
+                            name:
+                              type: string
+                              example: "Anderson"
+                            email:
+                              type: string
+                              example: "anderson@admin.com"
+                        fileSong:
+                          type: object
+                          properties:
+                            public_id:
+                              type: string
+                              example: "letra_como_ciervo_menmlm"
+                            secure_url:
+                              type: string
+                              example: "https://res.cloudinary.com/dks7wxcny/image/upload/v1746632400/letra_como_ciervo_menmlm.pdf"
+                        fileScore:
+                          type: object
+                          properties:
+                            public_id:
+                              type: string
+                              example: "COMO_EL_CIERVO_Marcos_Witt__Acordes_rbi4vs"
+                            secure_url:
+                              type: string
+                              example: "https://res.cloudinary.com/dks7wxcny/image/upload/v1746632400/COMO_EL_CIERVO_Marcos_Witt__Acordes_rbi4vs.pdf"
+                        linkSong:
+                          type: string
+                          example: "https://www.youtube.com/watch?v=mSxTWBTWFuc"
+                        category:
+                          type: string
+                          example: "Adoración"
+                        createdAt:
+                          type: string
+                          format: date-time
+                          example: "2025-05-07T15:40:02.006Z"
+                        updatedAt:
+                          type: string
+                          format: date-time
+                          example: "2025-05-07T15:40:02.007Z"
+                        __v:
+                          type: integer
+                          example: 0
+        '500':
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Error al obtener las canciones"
+                  error:
+                    type: string
+                    example: "Detalles del error"

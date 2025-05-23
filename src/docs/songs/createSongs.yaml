@@ -1,0 +1,145 @@
+paths:
+  /api/songs:
+    post:
+      summary: Crear una nueva canción
+      description: Permite a un usuario autenticado crear una nueva canción.
+      tags:
+        - Canciones
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Nombre de la canción.
+                fileSong:
+                  type: object
+                  description: Archivo de la canción.
+                  properties:
+                    public_id:
+                      type: string
+                      description: ID público del archivo.
+                    secure_url:
+                      type: string
+                      description: URL segura del archivo.
+                fileScore:
+                  type: object
+                  description: Archivo de la partitura.
+                  properties:
+                    public_id:
+                      type: string
+                      description: ID público de la partitura.
+                    secure_url:
+                      type: string
+                      description: URL segura de la partitura.
+                linkSong:
+                  type: string
+                  description: Enlace a la canción (por ejemplo, YouTube).
+                category:
+                  type: string
+                  description: Categoría de la canción (por ejemplo, alabanza).
+              required:
+                - name
+      responses:
+        '201':
+          description: Canción creada exitosamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: "demo 2"
+                      user:
+                        type: string
+                        example: "67ec9d0932dec7de26d9550a"
+                      fileSong:
+                        type: object
+                        properties:
+                          public_id:
+                            type: string
+                            example: "demo public_id"
+                          secure_url:
+                            type: string
+                            example: "secure_url"
+                      fileScore:
+                        type: object
+                        properties:
+                          public_id:
+                            type: string
+                            example: "demo public_id"
+                          secure_url:
+                            type: string
+                            example: "secure_url"
+                      linkSong:
+                        type: string
+                        example: "link youtube"
+                      category:
+                        type: string
+                        example: "alabanza"
+                      _id:
+                        type: string
+                        example: "681c010b788b556b0b07fdee"
+                      createdAt:
+                        type: string
+                        format: date-time
+                        example: "2025-05-08T00:55:39.055Z"
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        example: "2025-05-08T00:55:39.055Z"
+                      __v:
+                        type: integer
+                        example: 0
+                  message:
+                    type: string
+                    example: "Canción creada exitosamente"
+        '400':
+          description: Error de validación.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "El nombre de la canción es requerido"
+        '401':
+          description: Usuario no autenticado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "No autorizado - Usuario no identificado"
+        '500':
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Error al crear la canción"
+                  error:
+                    type: string
+                    example: "Detalles del error"

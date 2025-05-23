@@ -1,0 +1,83 @@
+paths:
+  /api/songs/{id}:
+    delete:
+      summary: Eliminar una canción específica
+      description: Permite a un usuario autenticado eliminar una canción que le pertenece.
+      tags:
+        - Canciones
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID de la canción a eliminar.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Canción eliminada exitosamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Canción eliminada exitosamente"
+        '403':
+          description: No tienes permiso para eliminar esta canción.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "No tienes permiso para eliminar esta canción"
+        '404':
+          description: Canción no encontrada.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Canción no encontrada"
+        '400':
+          description: ID de canción inválido.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "ID de canción inválido"
+        '500':
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Error al eliminar la canción"
+                  error:
+                    type: string
+                    example: "Detalles del error"

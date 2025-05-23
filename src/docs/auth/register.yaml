@@ -1,0 +1,107 @@
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: User's name
+                email:
+                  type: string
+                  format: email
+                  description: User's email address
+                password:
+                  type: string
+                  description: User's password
+                role:
+                  type: string
+                  enum:
+                    - admin
+                    - musician
+                    - user
+                  description: User's role (optional, defaults to 'user')
+              required:
+                - name
+                - email
+                - password
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/UserResponse'
+                  token:
+                    type: string
+                    description: Authentication token
+                required:
+                  - user
+                  - token
+        '400':
+          description: Bad request (e.g., invalid role, user already exists)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Error message
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Error message
+                  error:
+                    type: object
+                    description: Error details
+components:
+  schemas:
+    UserResponse:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: User ID
+        email:
+          type: string
+          format: email
+          description: User's email address
+        role:
+          type: string
+          description: User's role
+        playlists:
+          type: array
+          items:
+            type: string
+            description: Playlist ID
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+        updatedAt:
+          type: string
+          format: date-time
+          description: Update timestamp
+      required:
+        - _id
+        - email
+        - role
+        - createdAt
+        - updatedAt
