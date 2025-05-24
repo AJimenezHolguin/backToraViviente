@@ -10,7 +10,6 @@ const router = Router();
 
 router.post("/auth/register", register);
 router.post("/auth/login", login);
-router.post("/auth/login", login)
 router.get("/users", authMiddleware, getUsers);
 router.delete("/users/:id", authMiddleware, deleteUser);
 

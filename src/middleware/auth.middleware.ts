@@ -30,7 +30,6 @@ const authMiddleware = (
       id: string;
       role: Roles;
     };
-    const verified = jwt.verify(token, SECRET_KEY) as { id: string; role: Roles };
     req.user = { _id: verified.id, role: verified.role }; // Incluye el ID y el rol del usuario en la solicitud
     next();
   } catch (error) {
