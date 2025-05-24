@@ -30,7 +30,9 @@ const authMiddleware = (req, res, next) => {
 const validateRole = (allowedRoles) => {
     return (req, res, next) => {
         if (!req.user) {
-            res.status(401).json({ message: "No autorizado - Usuario no autenticado" });
+            res
+                .status(401)
+                .json({ message: "No autorizado - Usuario no autenticado" });
             return;
         }
         if (!allowedRoles.includes(req.user.role)) {

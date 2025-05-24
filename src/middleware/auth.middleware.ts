@@ -13,7 +13,11 @@ export interface AuthRequest extends Request {
   };
 }
 
-const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction): void => {
+const authMiddleware = (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): void => {
   const token = req.header("Authorization")?.split(" ")[1];
 
   if (!token) {
@@ -22,6 +26,10 @@ const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction): vo
   }
 
   try {
+    const verified = jwt.verify(token, SECRET_KEY) as {
+      id: string;
+      role: Roles;
+    };
     const verified = jwt.verify(token, SECRET_KEY) as { id: string; role: Roles };
     req.user = { _id: verified.id, role: verified.role }; // Incluye el ID y el rol del usuario en la solicitud
     next();
@@ -37,7 +45,9 @@ const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction): vo
 export const validateRole = (allowedRoles: Roles[]) => {
   return (req: AuthRequest, res: Response, next: NextFunction): void => {
     if (!req.user) {
-      res.status(401).json({ message: "No autorizado - Usuario no autenticado" });
+      res
+        .status(401)
+        .json({ message: "No autorizado - Usuario no autenticado" });
       return;
     }
 
