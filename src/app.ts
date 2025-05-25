@@ -43,6 +43,12 @@ setupSwagger(app);
 app.use("/api", userRoutes);
 app.use("/api", songRoutes);
 
+
+// Ruta simple de prueba
+app.get("/ping", (_req, res) => {
+    res.send("pong");
+  });
+
 // ❌ Ya no se usa app.listen aquí
 // ✅ Exportamos la app para usarla en api.ts
 export default app;
