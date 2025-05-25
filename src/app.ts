@@ -46,5 +46,3 @@ app.use("/api", songRoutes);
 // ❌ Ya no se usa app.listen aquí
 // ✅ Exportamos la app para usarla en api.ts
 export default app;
-
-
