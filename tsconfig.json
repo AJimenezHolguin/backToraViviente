@@ -9,7 +9,7 @@
     "skipLibCheck": true,
     "types": ["node"],
     "outDir": "dist",
-    "rootDir": "src"
+    "rootDir": "."
   },
-  "include": ["src", "global.d.ts"]
+  "include": ["src", "api"]
 }
