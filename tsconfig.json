@@ -11,5 +11,5 @@
     "outDir": "dist",
     "rootDir": "."
   },
-  "include": ["src", "api"]
+  "include": ["src", "src/api"]
 }
