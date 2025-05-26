@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateRole = void 0;
+// Ajusta la ruta según tu estructura de carpetas
 /**
  * Middleware para validar el rol del usuario
  * @param allowedRoles Roles permitidos para acceder a la ruta

@@ -1,11 +1,11 @@
 {
   "name": "tora-viviente-back",
   "version": "1.0.0",
-  "main": "dist/app.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/app.js",
-    "dev": "nodemon src/app.ts"
+    "start": "node dist/index.js",
+    "dev": "nodemon index.ts"
   },
   "keywords": [],
   "author": "",
