@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { Roles } from "../../types/auth"; // Ajusta la ruta según tu estructura de carpetas
+import { Roles } from "../types/auth";
+// Ajusta la ruta según tu estructura de carpetas
 
 /**
  * Middleware para validar el rol del usuario
