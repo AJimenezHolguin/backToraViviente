@@ -4,5 +4,5 @@
     "moduleResolution": "NodeNext",
     "esModuleInterop": true
   },
-  "include": ["src", "global.d.ts"]
+  "include": ["src", "global.d.ts", "index.js", "types", "routes", "middleware", "docs", "controller", "config"]
 }

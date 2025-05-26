@@ -1,5 +1,5 @@
 import mongoose, { Document, Schema } from "mongoose";
-import { Roles } from "../types/auth";
+import { Roles } from "../../types/auth";
 
 const RolesArray = Object.values(Roles) as string[];
 
