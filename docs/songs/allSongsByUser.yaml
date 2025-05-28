@@ -1,17 +1,10 @@
 paths:
-  /api/songs/user/{userId}:
+  /api/songs/user:
     get:
       summary: Obtener todas las canciones de un usuario
       description: Devuelve una lista de todas las canciones creadas por un usuario específico.
       tags:
         - Canciones
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          description: ID del usuario.
-          schema:
-            type: string
       responses:
         '200':
           description: Lista de canciones obtenida exitosamente.

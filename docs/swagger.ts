@@ -7,7 +7,7 @@ const options = {
     openapi: "3.0.0",
     info: { title: "Tora Viviente API", version: "1.0.0" },
   },
-  apis: ["./src/routes/*.ts", "./src/docs/**/*.yaml"], // Incluye el archivo YAML
+  apis: ["./routes/*.ts", "./docs/**/*.yaml"], 
 };
 
 const swaggerSpec = swaggerJsDoc(options);
