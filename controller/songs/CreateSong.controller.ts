@@ -25,10 +25,9 @@ export const createSong: RequestHandler = async (
   try {
     const { name, fileSong, fileScore, linkSong, category } = req.body;
     // Assuming the auth middleware adds the user
-    const { userId } = req.params; // Cambia esto según cómo estés manejando la autenticación
-    // Si estás usando un middleware de autenticación, el ID del usuario debería estar en req.user._id
+    const userId = req.user?._id;
 
-    // Validaciones básicas
+
     if (!name) {
       res.status(400).json({ message: "El nombre de la canción es requerido" });
       return;
@@ -161,7 +160,7 @@ export const getSongsByUser: RequestHandler = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { userId } = req.params;
+    const userId = req.user?._id;
     // Validar que el userId esté presente
     if (!userId) {
       res.status(400).json({ message: "El ID del usuario es requerido" });
