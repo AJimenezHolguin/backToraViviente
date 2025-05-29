@@ -8,8 +8,14 @@
     "ts.check": "tsc --project tsconfig.json",
     "add-build": "git add dist",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "clean": "rimraf dist",
     "dev": "nodemon --watch src --ext ts --exec 'npm run clean && tsc --outDir dist && node dist/index.js'"
   },
+  "pre-commit": [
+    "ts.check",
+    "build",
+    "add-build"
+  ],
   "pre-commit": [
     "ts.check",
     "build",
@@ -27,7 +33,6 @@
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
     "nodemon": "^3.1.9",
-    "rimraf": "^6.0.1",
     "rimraf": "^6.0.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.2"
