@@ -16,7 +16,7 @@ yarn-error.log*
 .env.production
 
 # Directorio de compilación
-dist/
+#dist/
 build/
 
 # Configuraciones del IDE
