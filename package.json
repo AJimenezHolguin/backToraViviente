@@ -4,9 +4,9 @@
   "main": "dist/index.js",
   "scripts": {
     "clean": "rimraf dist",
-    "build": "npm run clean && tsc --outDir dist --incremental false",
+    "build": "npm run clean && tsc --outDir dist --incremental false --strict",
     "start": "node dist/index.js",
-    "dev": "nodemon --watch src --ext ts --exec 'npm run clean && tsc --outDir dist && node dist/index.js'"
+    "dev": "nodemon index.ts"
   },
   "keywords": [],
   "author": "",
