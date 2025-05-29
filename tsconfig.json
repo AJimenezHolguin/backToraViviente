@@ -7,9 +7,20 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "outDir": "dist",
     "rootDir": "."
   },
-  "include": ["global.d.ts", "index.js", "types", "routes", "middleware", "docs", "controller", "config"]
+  "include": [
+    "index.ts",
+    "global.d.ts",
+    "types/**/*",
+    "routes/**/*",
+    "middleware/**/*",
+    "docs/**/*",
+    "controller/**/*",
+    "config/**/*"
+  ]
 }
