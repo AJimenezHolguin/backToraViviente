@@ -16,6 +16,11 @@
     "build",
     "add-build"
   ],
+  "pre-commit": [
+    "ts.check",
+    "build",
+    "add-build"
+  ],
   "keywords": [],
   "author": "",
   "license": "ISC",
