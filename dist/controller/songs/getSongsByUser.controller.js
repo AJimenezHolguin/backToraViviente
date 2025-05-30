@@ -10,12 +10,6 @@ const songs_model_1 = __importDefault(require("../../models/songs.model"));
 exports.getSongsByUserValidation = queryService_1.QueryService.validateQueryParams();
 const getSongsByUser = async (req, res, next) => {
     try {
-        console.log('Parámetros recibidos:', {
-            query: req.query,
-            params: req.params,
-            body: req.body,
-            user: req.user
-        });
         const userId = req.user?._id;
         if (!userId) {
             res.status(401).json({

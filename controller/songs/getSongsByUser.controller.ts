@@ -22,13 +22,6 @@ export const getSongsByUser: RequestHandler = async (
     next: NextFunction
 ): Promise<void> => {
     try {
-        console.log('Parámetros recibidos:', {
-            query: req.query,
-            params: req.params,
-            body: req.body,
-            user: req.user
-        });
-
         const userId = req.user?._id;
         if (!userId) {
             res.status(401).json({
