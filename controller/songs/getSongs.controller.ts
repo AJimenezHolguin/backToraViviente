@@ -25,11 +25,22 @@ export const getSongs: RequestHandler = async (
     res: Response,
     next: NextFunction
 ): Promise<void> => {
+    const userId = req.user?._id;
+    if (!userId) {
+        res.status(401).json({
+            success: false,
+            message: "No autorizado - Usuario no identificado"
+        });
+        return;
+    }
+
+
     try {
         // Ejecutar consulta usando el servicio
         const result = await QueryService.executeQuery(req, songsModel, {
             searchFields: ['name', 'category'],
-            defaultSortField: 'createdAt'
+            defaultSortField: 'createdAt',
+            userId: userId
         });
 
         // Respuesta

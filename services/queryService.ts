@@ -1,9 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import mongoose, { Model } from "mongoose";
+import songsModel from "../models/songs.model";
 
 export interface QueryOptions {
     searchFields?: string[];
     defaultSortField?: string;
+    userId: string;
 }
 
 export class QueryService {
@@ -74,7 +76,7 @@ export class QueryService {
     static async executeQuery<T>(
         req: Request,
         model: Model<T>,
-        options: QueryOptions = {}
+        options: QueryOptions
     ) {
         // Convertir parámetros a números
         const page = Number(req.query.page);
@@ -89,7 +91,9 @@ export class QueryService {
         const search = req.query.search?.toString() || '';
 
         // Consulta base
-        const query: any = {};
+        const query: any = {
+            user: options.userId
+        };
 
         // Filtro de búsqueda (si se proporcionan campos de búsqueda)
         if (search && options.searchFields?.length) {
@@ -134,5 +138,22 @@ export class QueryService {
                 search
             }
         };
+    }
+
+    /**
+     * Crea una nueva canción
+     */
+    static async createSong(req: Request, userId: string) {
+        const { name, category, fileSong, fileScore, linkSong } = req.body;
+        const newSong = new songsModel({
+            name,
+            category,
+            fileSong,
+            fileScore,
+            linkSong,
+            user: userId,
+        });
+
+        return await newSong.save();
     }
 }

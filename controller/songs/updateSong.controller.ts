@@ -22,11 +22,12 @@ export const updateMySong = async (
         }
 
         const { name, category, url } = req.body;
-
+        const updatedAt =  Date.now();
         // Buscar y actualizar la canción
         const updatedSong = await songsModel.findOneAndUpdate(
             { _id: songId, user: userId },
-            { name, category, url },
+            { name, category, url, updatedAt },
+            // Opciones para devolver el documento actualizado y validar
             { new: true, runValidators: true }
         );
 

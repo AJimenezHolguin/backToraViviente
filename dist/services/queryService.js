@@ -58,7 +58,7 @@ class QueryService {
     /**
      * Construye una consulta de mongoose con paginación y filtrado
      */
-    static async executeQuery(req, model, options = {}) {
+    static async executeQuery(req, model, options) {
         // Convertir parámetros a números
         const page = Number(req.query.page);
         const take = Number(req.query.take);
@@ -69,7 +69,9 @@ class QueryService {
         // Parámetros de búsqueda
         const search = req.query.search?.toString() || '';
         // Consulta base
-        const query = {};
+        const query = {
+            user: options.userId
+        };
         // Filtro de búsqueda (si se proporcionan campos de búsqueda)
         if (search && options.searchFields?.length) {
             query.$or = options.searchFields.map(field => ({

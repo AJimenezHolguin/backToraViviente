@@ -9,11 +9,20 @@ const songs_model_1 = __importDefault(require("../../models/songs.model"));
 // Validación de parámetros
 exports.getSongsValidation = queryService_1.QueryService.validateQueryParams();
 const getSongs = async (req, res, next) => {
+    const userId = req.user?._id;
+    if (!userId) {
+        res.status(401).json({
+            success: false,
+            message: "No autorizado - Usuario no identificado"
+        });
+        return;
+    }
     try {
         // Ejecutar consulta usando el servicio
         const result = await queryService_1.QueryService.executeQuery(req, songs_model_1.default, {
             searchFields: ['name', 'category'],
-            defaultSortField: 'createdAt'
+            defaultSortField: 'createdAt',
+            userId: userId
         });
         // Respuesta
         res.status(200).json({
