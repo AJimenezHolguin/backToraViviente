@@ -13,35 +13,27 @@ const songs_model_1 = __importDefault(require("../../models/songs.model"));
  */
 const createSong = async (req, res, next) => {
     try {
-        const { name, fileSong, fileScore, linkSong, category } = req.body;
-        // Assuming the auth middleware adds the user
         const userId = req.user?._id;
-        if (!name) {
-            res.status(400).json({ message: "El nombre de la canción es requerido" });
-            return;
-        }
         if (!userId) {
             res.status(401).json({ message: "No autorizado - Usuario no identificado" });
             return;
         }
-        // Crear la nueva canción
+        const { name, category, url } = req.body;
+        // Crear nueva canción
         const newSong = new songs_model_1.default({
             name,
-            fileSong: fileSong || undefined,
-            fileScore: fileScore || undefined,
-            linkSong: linkSong || undefined,
-            category: category || undefined,
-            user: userId
+            category,
+            url,
+            user: userId,
         });
-        // Guardar en la base de datos
-        const savedSong = await newSong.save();
-        // Respuesta exitosa
+        // Guardar canción
+        await newSong.save();
+        // Respuesta
         res.status(201).json({
             success: true,
-            data: savedSong,
-            message: "Canción creada exitosamente"
+            message: "Canción creada exitosamente",
+            song: newSong,
         });
-        return;
     }
     catch (error) {
         // Manejo de errores de validación de Mongoose
