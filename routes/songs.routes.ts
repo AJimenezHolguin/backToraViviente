@@ -6,7 +6,7 @@ import authMiddleware from "../middleware/auth.middleware";
 import { QueryService } from "../services/queryService";
 import { deleteMySong } from "../controller/songs/deleteSong.controller";
 import { getSongById } from "../controller/songs/getSongById.controller";
-import { getSongs, getSongsValidation } from "../controller/songs/getSongs.controller";
+import { getAllSongs, getSongsValidation } from "../controller/songs/getAllSongs.controller";
 import { getSongsByUser, getSongsByUserValidation } from "../controller/songs/getSongsByUser.controller";
 import { updateMySong } from "../controller/songs/updateSong.controller";
 import { createSong } from "../controller/songs/CreateSong.controllerr";
@@ -28,7 +28,7 @@ router.get(`/songs`,
     authMiddleware,
     ...getSongsValidation,             // Spread the validation middleware
     QueryService.handleValidationErrors,     // Middleware de manejo de errores
-    getSongs
+    getAllSongs
 );
 
 router.get(`/songs/:id`, authMiddleware, getSongById);

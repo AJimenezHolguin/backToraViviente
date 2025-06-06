@@ -5,6 +5,36 @@ paths:
       description: Devuelve una lista de todas las canciones creadas por un usuario específico.
       tags:
         - Canciones
+      security:
+        - bearerAuth: []  # Require authentication
+      parameters:
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: string
+          description: Número de página para la paginación
+        - in: query
+          name: take
+          required: true
+          schema:
+            type: string
+          description: Número de elementos por página
+        - in: query
+          name: order
+          required: true
+          schema:
+            type: string
+            enum: 
+              - ASC
+              - DESC
+          description: Orden de los resultados (Ascendente o Descendente)
+        - in: query
+          name: search
+          required: false
+          schema:
+            type: string
+          description: Término de búsqueda opcional
       responses:
         '200':
           description: Lista de canciones obtenida exitosamente.
@@ -16,67 +46,98 @@ paths:
                   success:
                     type: boolean
                     example: true
-                  count:
-                    type: integer
-                    example: 6
                   data:
                     type: array
                     items:
                       type: object
                       properties:
-                        _id:
-                          type: string
-                          example: "681b7ed10408acabf8288224"
-                        name:
-                          type: string
-                          example: "Como el ciervo"
-                        user:
-                          type: object
-                          properties:
-                            _id:
-                              type: string
-                              example: "681508c2d30979ef019ce9c5"
-                            name:
-                              type: string
-                              example: "Anderson"
-                            email:
-                              type: string
-                              example: "anderson@admin.com"
                         fileSong:
                           type: object
                           properties:
                             public_id:
                               type: string
-                              example: "letra_como_ciervo_menmlm"
+                              example: "Hashem_melej_dshwol"
                             secure_url:
                               type: string
-                              example: "https://res.cloudinary.com/dks7wxcny/image/upload/v1746632400/letra_como_ciervo_menmlm.pdf"
+                              example: "https://res.cloudinary.com/dks7wxcny/image/upload/v1749228377/Hashem_melej_dshwol.pdf"
                         fileScore:
                           type: object
                           properties:
                             public_id:
                               type: string
-                              example: "COMO_EL_CIERVO_Marcos_Witt__Acordes_rbi4vs"
+                              example: "Hashem_melej_uay5at"
                             secure_url:
                               type: string
-                              example: "https://res.cloudinary.com/dks7wxcny/image/upload/v1746632400/COMO_EL_CIERVO_Marcos_Witt__Acordes_rbi4vs.pdf"
+                              example: "https://res.cloudinary.com/dks7wxcny/image/upload/v1749228378/Hashem_melej_uay5at.pdf"
+                        _id:
+                          type: string
+                          example: "68431b5ce96840eaab2cf98c"
+                        name:
+                          type: string
+                          example: "Hasem melej"
+                        user:
+                          type: string
+                          example: "681508c2d30979ef019ce9c5"
                         linkSong:
                           type: string
-                          example: "https://www.youtube.com/watch?v=mSxTWBTWFuc"
+                          example: "https://www.youtube.com/watch?v=PNa2qI_2BGk"
                         category:
                           type: string
-                          example: "Adoración"
+                          example: "Hebrea/Mesiánica"
                         createdAt:
                           type: string
                           format: date-time
-                          example: "2025-05-07T15:40:02.006Z"
+                          example: "2025-06-06T16:46:20.219Z"
                         updatedAt:
                           type: string
                           format: date-time
-                          example: "2025-05-07T15:40:02.007Z"
+                          example: "2025-06-06T16:46:20.219Z"
                         __v:
                           type: integer
                           example: 0
+                  metadata:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                        example: 1
+                      take:
+                        type: integer
+                        example: 1
+                      total:
+                        type: integer
+                        example: 5
+                      pageCount:
+                        type: integer
+                        example: 5
+                      hasPreviousPage:
+                        type: boolean
+                        example: false
+                      hasNextPage:
+                        type: boolean
+                        example: true
+                      order:
+                        type: string
+                        example: "ASC"
+                      sortBy:
+                        type: string
+                        example: "createdAt"
+                      search:
+                        type: string
+                        example: ""
+        '401':
+          description: No autorizado - Token inválido o faltante
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "No autorizado - Token inválido o faltante"
         '404':
           description: No se encontraron canciones para este usuario.
           content:
@@ -91,7 +152,7 @@ paths:
                     type: string
                     example: "No se encontraron canciones para este usuario"
         '400':
-          description: ID del usuario inválido.
+          description: Parámetros inválidos.
           content:
             application/json:
               schema:
@@ -102,7 +163,7 @@ paths:
                     example: false
                   message:
                     type: string
-                    example: "El ID del usuario es requerido"
+                    example: "Parámetros inválidos o faltantes"
         '500':
           description: Error interno del servidor.
           content:
@@ -119,3 +180,10 @@ paths:
                   error:
                     type: string
                     example: "Detalles del error"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

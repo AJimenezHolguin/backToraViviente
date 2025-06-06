@@ -14,7 +14,6 @@ const createSong = async (req, res, next) => {
             return;
         }
         const { name, category, linkSong, fileScore, fileSong } = req.body;
-        console.log(req.body);
         // Crear nueva canción
         const newSong = new songs_model_1.default({
             name,
