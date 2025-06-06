@@ -1,6 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.QueryService = void 0;
+const songs_model_1 = __importDefault(require("../models/songs.model"));
 class QueryService {
     /**
      * Middleware de validación de parámetros de consulta
@@ -110,6 +114,21 @@ class QueryService {
                 search
             }
         };
+    }
+    /**
+     * Crea una nueva canción
+     */
+    static async createSong(req, userId) {
+        const { name, category, fileSong, fileScore, linkSong } = req.body;
+        const newSong = new songs_model_1.default({
+            name,
+            category,
+            fileSong,
+            fileScore,
+            linkSong,
+            user: userId,
+        });
+        return await newSong.save();
     }
 }
 exports.QueryService = QueryService;

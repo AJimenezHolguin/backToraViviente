@@ -9,7 +9,8 @@ import { getSongById } from "../controller/songs/getSongById.controller";
 import { getSongs, getSongsValidation } from "../controller/songs/getSongs.controller";
 import { getSongsByUser, getSongsByUserValidation } from "../controller/songs/getSongsByUser.controller";
 import { updateMySong } from "../controller/songs/updateSong.controller";
-import { createSong } from "../controller/songs/CreateSong.controller";
+import { createSong } from "../controller/songs/CreateSong.controllerr";
+
 
 const router = Router();
 

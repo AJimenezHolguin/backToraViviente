@@ -34,15 +34,20 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-// Esquema de Song
 const SongSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
-    user: { type: mongoose_1.Schema.Types.ObjectId, ref: "User", required: true }, // El usuario administrador
-    fileSong: { type: {} }, // Puede ser la URL de la canción
-    fileScore: { type: {} }, // Partitura (si es para músico)
-    linkSong: { type: String }, // Enlace a la canción
-    category: { type: String }, // Categoría de la canción (opcional)
+    user: { type: mongoose_1.Schema.Types.ObjectId, ref: "User", required: true },
+    fileSong: {
+        public_id: { type: String },
+        secure_url: { type: String },
+    },
+    fileScore: {
+        public_id: { type: String },
+        secure_url: { type: String },
+    },
+    linkSong: { type: String },
+    category: { type: String },
 });
 exports.default = mongoose_1.default.model("Song", SongSchema);

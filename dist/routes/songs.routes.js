@@ -13,9 +13,9 @@ const getSongById_controller_1 = require("../controller/songs/getSongById.contro
 const getSongs_controller_1 = require("../controller/songs/getSongs.controller");
 const getSongsByUser_controller_1 = require("../controller/songs/getSongsByUser.controller");
 const updateSong_controller_1 = require("../controller/songs/updateSong.controller");
-const CreateSong_controller_1 = require("../controller/songs/CreateSong.controller");
+const CreateSong_controllerr_1 = require("../controller/songs/CreateSong.controllerr");
 const router = (0, express_1.Router)();
-router.post(`/songs/create`, auth_middleware_1.default, (0, validateRole_1.validateRole)([auth_1.Roles.Admin]), CreateSong_controller_1.createSong);
+router.post(`/songs/create`, auth_middleware_1.default, (0, validateRole_1.validateRole)([auth_1.Roles.Admin]), CreateSong_controllerr_1.createSong);
 router.get(`/songs/user`, auth_middleware_1.default, (0, validateRole_1.validateRole)([auth_1.Roles.Admin]), ...getSongsByUser_controller_1.getSongsByUserValidation, // Spread the validation middleware
 queryService_1.QueryService.handleValidationErrors, // Middleware de manejo de errores
 getSongsByUser_controller_1.getSongsByUser);

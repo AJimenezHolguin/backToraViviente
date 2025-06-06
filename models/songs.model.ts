@@ -1,31 +1,37 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-// Interfaz Song
 export interface ISong extends Document {
   name: string;
   fileSong?: {
-    public_id: string; secure_url: string
-  };  // Archivo de la canción
+    public_id: string;
+    secure_url: string;
+  };
   fileScore?: {
-    public_id: string; secure_url: string
-  };  // Partitura (para músicos)
-  linkSong?: string;  // Enlace a la canción
+    public_id: string;
+    secure_url: string;
+  };
+  linkSong?: string;
   createdAt: Date;
   updatedAt: Date;
-  user: mongoose.Types.ObjectId;  // El usuario administrador que crea la canción
-  category?: string;  // Categoría de la canción (opcional)
+  user: mongoose.Types.ObjectId;
+  category?: string;
 }
 
-// Esquema de Song
 const SongSchema = new Schema<ISong>({
   name: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
-  user: { type: Schema.Types.ObjectId, ref: "User", required: true },  // El usuario administrador
-  fileSong: { type: {} },  // Puede ser la URL de la canción
-  fileScore: { type: {} },  // Partitura (si es para músico)
-  linkSong: { type: String },  // Enlace a la canción
-  category: { type: String },  // Categoría de la canción (opcional)
+  user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  fileSong: {
+    public_id: { type: String },
+    secure_url: { type: String },
+  },
+  fileScore: {
+    public_id: { type: String },
+    secure_url: { type: String },
+  },
+  linkSong: { type: String },
+  category: { type: String },
 });
 
 export default mongoose.model<ISong>("Song", SongSchema);
