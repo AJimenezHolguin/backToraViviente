@@ -20,7 +20,7 @@ declare global {
 // Validación de parámetros
 export const getSongsValidation = QueryService.validateQueryParams();
 
-export const getSongs: RequestHandler = async (
+export const getAllSongs: RequestHandler = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -40,7 +40,6 @@ export const getSongs: RequestHandler = async (
         const result = await QueryService.executeQuery(req, songsModel, {
             searchFields: ['name', 'category'],
             defaultSortField: 'createdAt',
-            userId: userId
         });
 
         // Respuesta

@@ -22,7 +22,6 @@ const getSongs = async (req, res, next) => {
         const result = await queryService_1.QueryService.executeQuery(req, songs_model_1.default, {
             searchFields: ['name', 'category'],
             defaultSortField: 'createdAt',
-            userId: userId
         });
         // Respuesta
         res.status(200).json({
