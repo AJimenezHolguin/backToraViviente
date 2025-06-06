@@ -7,7 +7,7 @@ exports.createPlaylist = void 0;
 const playList_model_1 = __importDefault(require("../../models/playList.model"));
 const createPlaylist = async (req, res) => {
     try {
-        const { name, songs, status } = req.body;
+        const { name, songs, status, } = req.body;
         const userId = req.user?._id;
         const playlist = new playList_model_1.default({ name: name, songs: songs, status: status, createdBy: userId });
         const savedPlaylist = await playlist.save();
