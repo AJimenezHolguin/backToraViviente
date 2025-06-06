@@ -21,7 +21,7 @@ queryService_1.QueryService.handleValidationErrors, // Middleware de manejo de e
 getSongsByUser_controller_1.getSongsByUser);
 router.get(`/songs`, auth_middleware_1.default, ...getAllSongs_controller_1.getSongsValidation, // Spread the validation middleware
 queryService_1.QueryService.handleValidationErrors, // Middleware de manejo de errores
-getAllSongs_controller_1.getSongs);
+getAllSongs_controller_1.getAllSongs);
 router.get(`/songs/:id`, auth_middleware_1.default, getSongById_controller_1.getSongById);
 router.delete(`/songs/:id`, auth_middleware_1.default, (0, validateRole_1.validateRole)([auth_1.Roles.Admin]), deleteSong_controller_1.deleteMySong);
 router.put(`/songs/:id`, auth_middleware_1.default, (0, validateRole_1.validateRole)([auth_1.Roles.Admin]), updateSong_controller_1.updateMySong);

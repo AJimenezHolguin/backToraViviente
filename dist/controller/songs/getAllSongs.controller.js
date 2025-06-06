@@ -3,12 +3,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSongs = exports.getSongsValidation = void 0;
+exports.getAllSongs = exports.getSongsValidation = void 0;
 const queryService_1 = require("../../services/queryService");
 const songs_model_1 = __importDefault(require("../../models/songs.model"));
 // Validación de parámetros
 exports.getSongsValidation = queryService_1.QueryService.validateQueryParams();
-const getSongs = async (req, res, next) => {
+const getAllSongs = async (req, res, next) => {
     const userId = req.user?._id;
     if (!userId) {
         res.status(401).json({
@@ -38,4 +38,4 @@ const getSongs = async (req, res, next) => {
         });
     }
 };
-exports.getSongs = getSongs;
+exports.getAllSongs = getAllSongs;
