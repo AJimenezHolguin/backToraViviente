@@ -3,7 +3,7 @@ import PlaylistModel from "../../models/playList.model";
 
 export const createPlaylist = async (req: Request, res: Response) => {
     try {
-        const { name, songs, status } = req.body;
+        const { name, songs, status,  } = req.body;
         const userId = req.user?._id;
 
 

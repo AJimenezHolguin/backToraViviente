@@ -1,0 +1,119 @@
+paths:
+  /api/playlist:
+    post:
+      summary: Crear una nueva playlist
+      description: Crea una nueva playlist para el usuario autenticado
+      tags:
+        - Playlists
+      security:
+        - bearerAuth: []  # Require authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - songs
+                - status
+              properties:
+                name:
+                  type: string
+                  example: "Segunda playlist"
+                  description: Nombre de la playlist
+                songs:
+                  type: array
+                  items:
+                    type: string
+                    description: IDs de las canciones a incluir en la playlist
+                    example: "681bdc64a06efaadfeffbe8f"
+                status:
+                  type: boolean
+                  description: Estado de la playlist (público o privado)
+                  example: false
+      responses:
+        '201':
+          description: Playlist creada exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Playlist creada exitosamente"
+                  playlist:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: "Segunda playlist"
+                      createdBy:
+                        type: string
+                        example: "681508c2d30979ef019ce9c5"
+                      songs:
+                        type: array
+                        items:
+                          type: string
+                          example: "681bdc64a06efaadfeffbe8f"
+                      status:
+                        type: boolean
+                        example: false
+                      _id:
+                        type: string
+                        example: "684338db13fcf9aabd52a067"
+                      createdAt:
+                        type: string
+                        format: date-time
+                        example: "2025-06-06T18:52:11.280Z"
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        example: "2025-06-06T18:52:11.280Z"
+                      __v:
+                        type: integer
+                        example: 0
+        '400':
+          description: Error al crear la playlist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error al crear la playlist"
+        '401':
+          description: No autorizado - Token inválido o faltante
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "No autorizado - Token inválido o faltante"
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error al crear la playlist"
+                  error:
+                    type: object
+                    description: Detalles del error del servidor
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
