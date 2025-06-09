@@ -83,9 +83,15 @@ paths:
                         createdBy:
                           type: object
                           properties:
+                            _id:
+                              type: string
+                              description: Unique identifier of the playlist creator
                             name:
                               type: string
                               description: Name of the playlist creator
+                            email:
+                              type: string
+                              description: Email of the playlist creator
                         songs:
                           type: array
                           items:

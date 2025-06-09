@@ -49,15 +49,40 @@ const allsPlaylist = async (req, res) => {
             .sort({ [String(sortBy)]: sortDirection })
             .skip(skip)
             .limit(takeNum)
-            .populate('createdBy', 'name')
+            .populate({
+            path: 'createdBy',
+            select: '_id name', // Only select _id and name
+            match: { _id: { $exists: true } } // Ensure only populated if createdBy exists
+        })
             .populate('songs', 'title');
+        // Transform playlists to handle null createdBy
+        const transformedPlaylists = playlists.map(playlist => {
+            const playlistObject = playlist.toObject();
+            // If createdBy is populated, extract _id and name
+            const createdBy = playlistObject.createdBy && playlistObject.createdBy._id
+                ? {
+                    _id: String(playlistObject.createdBy._id),
+                    name: String(playlistObject.createdBy.name || '')
+                }
+                : null;
+            return {
+                _id: String(playlistObject._id),
+                name: playlistObject.name,
+                createdBy,
+                songs: playlistObject.songs.map(song => String(song)),
+                status: playlistObject.status,
+                createdAt: playlistObject.createdAt,
+                updatedAt: playlistObject.updatedAt,
+                __v: playlistObject.__v
+            };
+        });
         // Count total documents for pagination metadata
         const total = await playList_model_1.default.countDocuments(searchQuery);
         // Calculate page count
         const pageCount = Math.ceil(total / takeNum);
         res.status(200).json({
             success: true,
-            data: playlists,
+            data: transformedPlaylists,
             metadata: {
                 page: pageNum,
                 take: takeNum,

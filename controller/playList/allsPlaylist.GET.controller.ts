@@ -10,6 +10,22 @@ interface PlaylistQueryParams {
     sortBy?: string;
 }
 
+interface CreatedByInfo {
+    _id: string;
+    name: string;
+}
+
+interface TransformedPlaylist {
+    _id: string;
+    name: string;
+    createdBy: CreatedByInfo | null;
+    songs: string[];
+    status: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+    __v?: number;
+}
+
 export const allsPlaylist = async (req: Request, res: Response) => {
     try {
         // Destructure query parameters
@@ -65,8 +81,36 @@ export const allsPlaylist = async (req: Request, res: Response) => {
             .sort({ [String(sortBy)]: sortDirection })
             .skip(skip)
             .limit(takeNum)
-            .populate('createdBy', 'name')
+            .populate({
+                path: 'createdBy',
+                select: '_id name', // Only select _id and name
+                match: { _id: { $exists: true } } // Ensure only populated if createdBy exists
+            })
             .populate('songs', 'title');
+
+        // Transform playlists to handle null createdBy
+        const transformedPlaylists: TransformedPlaylist[] = playlists.map(playlist => {
+            const playlistObject = playlist.toObject();
+
+            // If createdBy is populated, extract _id and name
+            const createdBy = playlistObject.createdBy && (playlistObject.createdBy as any)._id
+                ? {
+                    _id: String((playlistObject.createdBy as any)._id),
+                    name: String((playlistObject.createdBy as any).name || '')
+                }
+                : null;
+
+            return {
+                _id: String(playlistObject._id),
+                name: playlistObject.name,
+                createdBy,
+                songs: playlistObject.songs.map(song => String(song)),
+                status: playlistObject.status,
+                createdAt: playlistObject.createdAt,
+                updatedAt: playlistObject.updatedAt,
+                __v: playlistObject.__v
+            };
+        });
 
         // Count total documents for pagination metadata
         const total = await Playlist.countDocuments(searchQuery);
@@ -76,7 +120,7 @@ export const allsPlaylist = async (req: Request, res: Response) => {
 
         res.status(200).json({
             success: true,
-            data: playlists,
+            data: transformedPlaylists,
             metadata: {
                 page: pageNum,
                 take: takeNum,
