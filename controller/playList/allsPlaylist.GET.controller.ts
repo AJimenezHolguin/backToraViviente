@@ -15,11 +15,26 @@ interface CreatedByInfo {
     name: string;
 }
 
+interface SongInfo {
+    _id: string;
+    title: string;
+    fileSong?: {
+        public_id: string;
+        secure_url: string;
+    };
+    fileScore?: {
+        public_id: string;
+        secure_url: string;
+    };
+    linkSong?: string;
+    category?: string;
+}
+
 interface TransformedPlaylist {
     _id: string;
     name: string;
     createdBy: CreatedByInfo | null;
-    songs: string[];
+    songs: SongInfo[];
     status: boolean;
     createdAt: Date;
     updatedAt: Date;
@@ -86,9 +101,12 @@ export const allsPlaylist = async (req: Request, res: Response) => {
                 select: '_id name', // Only select _id and name
                 match: { _id: { $exists: true } } // Ensure only populated if createdBy exists
             })
-            .populate('songs', 'title');
+            .populate({
+                path: 'songs',
+                select: '_id title fileSong fileScore linkSong category' // Select specific song fields
+            });
 
-        // Transform playlists to handle null createdBy
+        // Transform playlists to handle null createdBy and populate song details
         const transformedPlaylists: TransformedPlaylist[] = playlists.map(playlist => {
             const playlistObject = playlist.toObject();
 
@@ -100,11 +118,21 @@ export const allsPlaylist = async (req: Request, res: Response) => {
                 }
                 : null;
 
+            // Transform songs to ensure proper formatting
+            const songs: SongInfo[] = playlistObject.songs.map((song: any) => ({
+                _id: String(song._id),
+                title: song.title,
+                fileSong: song.fileSong,
+                fileScore: song.fileScore,
+                linkSong: song.linkSong,
+                category: song.category
+            }));
+
             return {
                 _id: String(playlistObject._id),
                 name: playlistObject.name,
                 createdBy,
-                songs: playlistObject.songs.map(song => String(song)),
+                songs,
                 status: playlistObject.status,
                 createdAt: playlistObject.createdAt,
                 updatedAt: playlistObject.updatedAt,
