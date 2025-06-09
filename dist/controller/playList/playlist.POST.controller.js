@@ -7,7 +7,7 @@ exports.createPlaylist = void 0;
 const playList_model_1 = __importDefault(require("../../models/playList.model"));
 const createPlaylist = async (req, res) => {
     try {
-        const { name, songs, status, } = req.body;
+        const { name, songs, status } = req.body;
         const userId = req.user?._id;
         const playlist = new playList_model_1.default({ name: name, songs: songs, status: status, createdBy: userId });
         const savedPlaylist = await playlist.save();
@@ -15,7 +15,23 @@ const createPlaylist = async (req, res) => {
             res.status(400).json({ message: "Error al crear la playlist" });
             return;
         }
-        res.status(201).json({ message: "Playlist creada exitosamente", playlist: savedPlaylist });
+        // Populate the createdBy field with user details
+        const populatedPlaylist = await playList_model_1.default.findById(savedPlaylist._id)
+            .populate({
+            path: 'createdBy',
+            select: '_id name email'
+        });
+        res.status(201).json({
+            message: "Playlist creada exitosamente",
+            playlist: {
+                ...populatedPlaylist?.toObject(),
+                createdBy: populatedPlaylist?.createdBy ? {
+                    id: populatedPlaylist.createdBy._id,
+                    name: populatedPlaylist.createdBy.name,
+                    email: populatedPlaylist.createdBy.email
+                } : null
+            }
+        });
     }
     catch (error) {
         res.status(500).json({ message: "Error al crear la playlist", error });
