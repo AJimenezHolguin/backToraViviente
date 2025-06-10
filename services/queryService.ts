@@ -111,12 +111,19 @@ export class QueryService {
         const hasNextPage = page < pageCount;
 
         const data = await model.find(query)
+            .populate({
+                path: 'user',
+                select: 'name' // Only select the name field from the user
+            })
             .sort({ [sortBy]: order })
             .skip(skip)
             .limit(take);
 
         return {
-            data,
+            data: data.map(item => ({
+                ...item.toObject(), // Convert to plain object
+                userName: (item as any).user?.name // Add userName from populated user
+            })),
             metadata: {
                 page,
                 take,
