@@ -50,8 +50,17 @@ paths:
                         type: string
                         example: "Segunda playlist"
                       createdBy:
-                        type: string
-                        example: "681508c2d30979ef019ce9c5"
+                        type: object
+                        properties:
+                          _id:
+                            type: string
+                            example: "681508c2d30979ef019ce9c5"
+                          name:
+                            type: string
+                            example: "Anderson"
+                          email:
+                            type: string
+                            example: "anderson@admin.com"
                       songs:
                         type: array
                         items:

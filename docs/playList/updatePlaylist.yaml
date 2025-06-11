@@ -1,0 +1,216 @@
+openapi: 3.0.0
+info:
+  title: Playlist Update API
+  description: API for updating playlists
+  version: 1.0.0
+
+paths:
+  /api/playlists/{playlistId}:
+    put:
+      summary: Update a Playlist
+      description: Update an existing playlist. Only the playlist creator can update the playlist.
+      tags:
+        - Playlists
+      security:
+        - bearerAuth: []
+      
+      parameters:
+        - in: path
+          name: playlistId
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the playlist to update
+      
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: New name for the playlist
+                songs:
+                  type: array
+                  items:
+                    type: string
+                    description: Array of song IDs to be added to the playlist
+                status:
+                  type: boolean
+                  description: New status of the playlist
+      
+      responses:
+        '200':
+          description: Successful playlist update
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        description: Unique identifier for the playlist
+                      name:
+                        type: string
+                        description: Name of the playlist
+                      createdBy:
+                        type: object
+                        properties:
+                          _id:
+                            type: string
+                            description: Unique identifier of the playlist creator
+                          name:
+                            type: string
+                            description: Name of the playlist creator
+                      songs:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            _id:
+                              type: string
+                              description: Unique identifier of the song
+                            title:
+                              type: string
+                              description: Title of the song
+                            fileSong:
+                              type: object
+                              properties:
+                                public_id:
+                                  type: string
+                                  description: Public ID of the song file
+                                secure_url:
+                                  type: string
+                                  description: Secure URL of the song file
+                            fileScore:
+                              type: object
+                              properties:
+                                public_id:
+                                  type: string
+                                  description: Public ID of the score file
+                                secure_url:
+                                  type: string
+                                  description: Secure URL of the score file
+                            linkSong:
+                              type: string
+                              description: Link to the song
+                            category:
+                              type: string
+                              description: Category of the song
+                      status:
+                        type: boolean
+                        description: Status of the playlist
+                      createdAt:
+                        type: string
+                        format: date-time
+                        description: Timestamp of playlist creation
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        description: Timestamp of last playlist update
+                  message:
+                    type: string
+                    description: Success message
+        
+        '400':
+          description: Bad Request - Invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    description: Error message explaining the validation failure
+                  data:
+                    type: object
+                    nullable: true
+        
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    description: Authentication error message
+                  data:
+                    type: object
+                    nullable: true
+        
+        '403':
+          description: Forbidden - Not authorized to update this playlist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    description: Authorization error message
+                  data:
+                    type: object
+                    nullable: true
+        
+        '404':
+          description: Not Found - Playlist does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    description: Not found error message
+                  data:
+                    type: object
+                    nullable: true
+        
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    description: Server error message
+                  data:
+                    type: object
+                    nullable: true
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: [] 

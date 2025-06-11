@@ -1,0 +1,231 @@
+openapi: 3.0.0
+info:
+  title: User Playlist API
+  description: API for retrieving user-specific playlists
+  version: 1.0.0
+
+paths:
+  /api/playlists/user:
+    get:
+      summary: Retrieve User's Playlists
+      description: Fetch playlists created by the authenticated user with advanced filtering, pagination, and sorting
+      tags:
+        - User Playlists
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Page number for pagination
+        
+        - in: query
+          name: take
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+          description: Number of items to retrieve per page
+        
+        - in: query
+          name: order
+          required: true
+          schema:
+            type: string
+            enum: ['ASC', 'DESC']
+            default: 'ASC'
+          description: Sort order (Ascending or Descending)
+        
+        - in: query
+          name: search
+          required: false
+          schema:
+            type: string
+          description: Search term to filter playlists by name
+        
+        - in: query
+          name: sortBy
+          required: false
+          schema:
+            type: string
+            default: 'createdAt'
+            enum: 
+              - 'createdAt'
+              - 'name'
+          description: Field to sort the results by
+
+      responses:
+        '200':
+          description: Successful retrieval of user's playlists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                          description: Unique identifier for the playlist
+                        name:
+                          type: string
+                          description: Name of the playlist
+                        createdBy:
+                          type: object
+                          properties:
+                            _id:
+                              type: string
+                              description: Unique identifier of the playlist creator
+                            name:
+                              type: string
+                              description: Name of the playlist creator
+                        songs:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              _id:
+                                type: string
+                                description: Unique identifier of the song
+                              title:
+                                type: string
+                                description: Title of the song
+                              fileSong:
+                                type: object
+                                properties:
+                                  public_id:
+                                    type: string
+                                    description: Public ID of the song file
+                                  secure_url:
+                                    type: string
+                                    description: Secure URL of the song file
+                              fileScore:
+                                type: object
+                                properties:
+                                  public_id:
+                                    type: string
+                                    description: Public ID of the score file
+                                  secure_url:
+                                    type: string
+                                    description: Secure URL of the score file
+                              linkSong:
+                                type: string
+                                description: Link to the song
+                              category:
+                                type: string
+                                description: Category of the song
+                        status:
+                          type: boolean
+                          description: Status of the playlist
+                        createdAt:
+                          type: string
+                          format: date-time
+                          description: Timestamp of playlist creation
+                        updatedAt:
+                          type: string
+                          format: date-time
+                          description: Timestamp of last playlist update
+                  metadata:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                        description: Current page number
+                      take:
+                        type: integer
+                        description: Number of items per page
+                      total:
+                        type: integer
+                        description: Total number of user's playlists
+                      pageCount:
+                        type: integer
+                        description: Total number of pages
+                      hasPreviousPage:
+                        type: boolean
+                        description: Indicates if there is a previous page
+                      hasNextPage:
+                        type: boolean
+                        description: Indicates if there is a next page
+                      order:
+                        type: string
+                        enum: ['ASC', 'DESC']
+                        description: Sort order used
+                      sortBy:
+                        type: string
+                        description: Field used for sorting
+                      search:
+                        type: string
+                        description: Search term used for filtering
+
+        '400':
+          description: Bad Request - Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    description: Error message explaining the validation failure
+                  data:
+                    type: array
+                    example: []
+
+        '401':
+          description: Unauthorized - User authentication required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    description: Authentication error message
+                  data:
+                    type: array
+                    example: []
+
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    description: Error message
+                  data:
+                    type: array
+                    example: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: [] 

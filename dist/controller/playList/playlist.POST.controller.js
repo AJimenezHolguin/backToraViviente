@@ -15,7 +15,23 @@ const createPlaylist = async (req, res) => {
             res.status(400).json({ message: "Error al crear la playlist" });
             return;
         }
-        res.status(201).json({ message: "Playlist creada exitosamente", playlist: savedPlaylist });
+        // Populate the createdBy field with user details
+        const populatedPlaylist = await playList_model_1.default.findById(savedPlaylist._id)
+            .populate({
+            path: 'createdBy',
+            select: '_id name email'
+        });
+        res.status(201).json({
+            message: "Playlist creada exitosamente",
+            playlist: {
+                ...populatedPlaylist?.toObject(),
+                createdBy: populatedPlaylist?.createdBy ? {
+                    id: populatedPlaylist.createdBy._id,
+                    name: populatedPlaylist.createdBy.name,
+                    email: populatedPlaylist.createdBy.email
+                } : null
+            }
+        });
     }
     catch (error) {
         res.status(500).json({ message: "Error al crear la playlist", error });
