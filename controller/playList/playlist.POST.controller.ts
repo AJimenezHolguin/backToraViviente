@@ -4,7 +4,7 @@ import { IUser } from "../../models/user.model";
 
 export const createPlaylist = async (req: Request, res: Response) => {
     try {
-        const { name, songs, status } = req.body;
+        const { name, songs, status,  } = req.body;
         const userId = req.user?._id;
 
         const playlist = new PlaylistModel({ name: name, songs: songs, status: status, createdBy: userId });
