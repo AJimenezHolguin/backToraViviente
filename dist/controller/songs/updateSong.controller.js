@@ -18,10 +18,10 @@ const updateMySong = async (req, res, next) => {
             res.status(401).json({ message: "No autorizado - Usuario no identificado" });
             return;
         }
-        const { name, category, url } = req.body;
+        const { name, category, linkSong, fileSong, fileScore } = req.body;
         const updatedAt = Date.now();
         // Buscar y actualizar la canción
-        const updatedSong = await songs_model_1.default.findOneAndUpdate({ _id: songId, user: userId }, { name, category, url, updatedAt }, 
+        const updatedSong = await songs_model_1.default.findOneAndUpdate({ _id: songId, user: userId }, { name, category, linkSong, fileSong, fileScore, updatedAt }, 
         // Opciones para devolver el documento actualizado y validar
         { new: true, runValidators: true });
         if (!updatedSong) {
