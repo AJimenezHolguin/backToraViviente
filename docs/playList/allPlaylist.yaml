@@ -11,6 +11,8 @@ paths:
       description: Fetch playlists with advanced filtering, pagination, and sorting
       tags:
         - Playlists
+      security:
+        - bearerAuth: []  # Require authentication
       parameters:
         - in: query
           name: page

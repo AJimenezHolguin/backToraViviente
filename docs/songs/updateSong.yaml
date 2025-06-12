@@ -5,6 +5,8 @@ paths:
       description: Permite a un usuario autenticado actualizar una canción que le pertenece.
       tags:
         - Canciones
+      security:
+        - bearerAuth: []  # Requiere autenticación
       parameters:
         - name: id
           in: path

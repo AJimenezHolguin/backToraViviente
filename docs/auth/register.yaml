@@ -1,5 +1,5 @@
 paths:
-  /auth/register:
+  /api/auth/register:
     post:
       summary: Register a new user
       tags:

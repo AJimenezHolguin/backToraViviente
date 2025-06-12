@@ -75,9 +75,9 @@ paths:
                         name:
                           type: string
                           example: "Hasem melej"
-                        user:
+                        userName:
                           type: string
-                          example: "681508c2d30979ef019ce9c5"
+                          example: "Anderson"
                         linkSong:
                           type: string
                           example: "https://www.youtube.com/watch?v=PNa2qI_2BGk"

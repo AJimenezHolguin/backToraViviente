@@ -1,5 +1,5 @@
 paths:
-  /auth/login:
+  /api/auth/login:
     post:
       summary: Login a user
       tags:
