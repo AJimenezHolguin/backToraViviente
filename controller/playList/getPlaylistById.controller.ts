@@ -25,7 +25,7 @@ export const getPlaylistById: RequestHandler = async (
     // Buscar la playlist y poblar canciones y creador
     const playlist = await PlaylistModel.findById(playlistId)
       .populate({ path: "createdBy", select: "name email" })
-      .populate({ path: "songs", select: "name category user" }); // Asegúrate que "songs" es el nombre correcto del campo en tu esquema
+      .populate({ path: "songs", select: "name category fileSong fileScore linkSong" }); // Asegúrate que "songs" es el nombre correcto del campo en tu esquema
 
     // Si el campo se llama diferente en tu esquema, por ejemplo "tracks", usa:
     // .populate({ path: "tracks", select: "name category user" });

@@ -55,15 +55,33 @@ paths:
                             _id:
                               type: string
                               example: "681b7ed10408acabf8288224"
-                            name:
+                            title:
                               type: string
                               example: "Como el ciervo"
                             category:
                               type: string
                               example: "Adoración"
-                            user:
+                            linkSong:
                               type: string
-                              example: "681508c2d30979ef019ce9c5"
+                              example: "https://www.youtube.com/watch?v=gTr-eirtPfc"
+                            fileSong:
+                              type: object
+                              properties:
+                                public_id:
+                                  type: string
+                                  example: "LA_NUBE_DE_JEHOVA_SHEKINAH_Ricardo_Rodríguez__Acordes_g6colp"
+                                secure_url:
+                                  type: string
+                                  example: "https://res.cloudinary.com/dks7wxcny/image/upload/v1749621638/LA_NUBE_DE_JEHOVA_SHEKINAH_Ricardo_Rodr%C3%ADguez__Acordes_g6colp.pdf"
+                            fileScore:
+                              type: object
+                              properties:
+                                public_id:
+                                  type: string
+                                  example: "LA_NUBE_DE_JEHOVA_SHEKINAH_Ricardo_Rodríguez__Acordes_g6colp"
+                                secure_url:
+                                  type: string
+                                  example: "https://res.cloudinary.com/dks7wxcny/image/upload/v1749621638/LA_NUBE_DE_JEHOVA_SHEKINAH_Ricardo_Rodr%C3%ADguez__Acordes_g6colp.pdf"
                       status:
                         type: boolean
                         example: true
