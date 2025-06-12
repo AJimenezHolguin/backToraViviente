@@ -113,17 +113,22 @@ export class QueryService {
         const data = await model.find(query)
             .populate({
                 path: 'user',
-                select: 'name' // Only select the name field from the user
+                select: 'name' // Solo el nombre del usuario
             })
             .sort({ [sortBy]: order })
             .skip(skip)
             .limit(take);
 
         return {
-            data: data.map(item => ({
-                ...item.toObject(), // Convert to plain object
-                userName: (item as any).user?.name // Add userName from populated user
-            })),
+            data: data.map(item => {
+                const obj = item.toObject();
+                return {
+                    ...obj,
+                    userName: (item as any).user?.name,
+                    // Elimina el campo user (id o ref)
+                    user: undefined
+                };
+            }),
             metadata: {
                 page,
                 take,

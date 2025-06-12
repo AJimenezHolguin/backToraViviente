@@ -24,15 +24,10 @@ const getSongsByUser = async (req, res, next) => {
             searchFields: ['name', 'category'],
             defaultSortField: 'createdAt'
         });
-        // Modificar la consulta para filtrar por usuario
-        const filteredResult = {
-            ...result,
-            data: result.data.filter(song => song.user.toString() === userId)
-        };
-        // Respuesta
+        // No es necesario filtrar por user, ya que la query ya lo hace
         res.status(200).json({
             success: true,
-            ...filteredResult
+            ...result
         });
     }
     catch (error) {

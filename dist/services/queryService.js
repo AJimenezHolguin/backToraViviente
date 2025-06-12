@@ -90,11 +90,23 @@ class QueryService {
         const hasPreviousPage = page > 1;
         const hasNextPage = page < pageCount;
         const data = await model.find(query)
+            .populate({
+            path: 'user',
+            select: 'name' // Solo el nombre del usuario
+        })
             .sort({ [sortBy]: order })
             .skip(skip)
             .limit(take);
         return {
-            data,
+            data: data.map(item => {
+                const obj = item.toObject();
+                return {
+                    ...obj,
+                    userName: item.user?.name,
+                    // Elimina el campo user (id o ref)
+                    user: undefined
+                };
+            }),
             metadata: {
                 page,
                 take,
