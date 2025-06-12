@@ -43,15 +43,9 @@ interface TransformedPlaylist {
 
 export const allsPlaylist = async (req: Request, res: Response) => {
     try {
-        // Destructure query parameters
-        const { page, take, order, search = '', sortBy = 'createdAt' } = req.query;
+        const { page, take, order, search = '', sortBy = 'createdAt' } = req.query as unknown as PlaylistQueryParams;
 
-        // Validate that page, take, and order are present and valid
-        if (
-            page === undefined ||
-            take === undefined ||
-            order === undefined
-        ) {
+        if (!page || !take || !order) {
             return res.status(400).json({
                 success: false,
                 message: 'page, take, and order are mandatory query parameters',
@@ -59,12 +53,10 @@ export const allsPlaylist = async (req: Request, res: Response) => {
             });
         }
 
-        // Convert to numbers and validate
         const pageNum = Number(page);
         const takeNum = Number(take);
         const orderStr = String(order).toUpperCase();
 
-        // Additional validation
         if (
             isNaN(pageNum) ||
             isNaN(takeNum) ||
@@ -79,54 +71,47 @@ export const allsPlaylist = async (req: Request, res: Response) => {
             });
         }
 
-        // Prepare search query
         const searchQuery: mongoose.FilterQuery<IPlaylist> = {};
         if (search) {
-            searchQuery.name = { $regex: String(search), $options: 'i' };
+            searchQuery.name = { $regex: search, $options: 'i' };
         }
 
-        // Calculate pagination
         const skip = (pageNum - 1) * takeNum;
-
-        // Determine sort direction
         const sortDirection = orderStr === 'ASC' ? 1 : -1;
 
-        // Fetch playlists with pagination and optional search
         const playlists = await Playlist.find(searchQuery)
-            .sort({ [String(sortBy)]: sortDirection })
+            .sort({ [sortBy || 'createdAt']: sortDirection })
             .skip(skip)
             .limit(takeNum)
             .populate({
-                path: 'createdBy',
-                select: '_id name', // Only select _id and name
-                match: { _id: { $exists: true } } // Ensure only populated if createdBy exists
+                path: 'songs',
+                select: '_id name fileSong fileScore linkSong category'
             })
             .populate({
-                path: 'songs',
-                select: '_id title fileSong fileScore linkSong category' // Select specific song fields
+                path: 'createdBy',
+                select: '_id name'
             });
 
-        // Transform playlists to handle null createdBy and populate song details
         const transformedPlaylists: TransformedPlaylist[] = playlists.map(playlist => {
             const playlistObject = playlist.toObject();
 
-            // If createdBy is populated, extract _id and name
             const createdBy = playlistObject.createdBy && (playlistObject.createdBy as any)._id
                 ? {
                     _id: String((playlistObject.createdBy as any)._id),
-                    name: String((playlistObject.createdBy as any).name || '')
+                    name: String((playlistObject.createdBy as any).name ?? '')
                 }
                 : null;
 
-            // Transform songs to ensure proper formatting
-            const songs: SongInfo[] = playlistObject.songs.map((song: any) => ({
-                _id: String(song._id),
-                title: song.title,
-                fileSong: song.fileSong,
-                fileScore: song.fileScore,
-                linkSong: song.linkSong,
-                category: song.category
-            }));
+            const songs: SongInfo[] = (playlistObject.songs || [])
+                .filter((song: any) => song && song._id)
+                .map((song: any) => ({
+                    _id: String(song._id),
+                    title: song.name,
+                    fileSong: song.fileSong,
+                    fileScore: song.fileScore,
+                    linkSong: song.linkSong,
+                    category: song.category
+                }));
 
             return {
                 _id: String(playlistObject._id),
@@ -140,13 +125,10 @@ export const allsPlaylist = async (req: Request, res: Response) => {
             };
         });
 
-        // Count total documents for pagination metadata
         const total = await Playlist.countDocuments(searchQuery);
-
-        // Calculate page count
         const pageCount = Math.ceil(total / takeNum);
 
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             data: transformedPlaylists,
             metadata: {
@@ -163,11 +145,10 @@ export const allsPlaylist = async (req: Request, res: Response) => {
         });
     } catch (error) {
         console.error('Error fetching playlists:', error);
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: 'Internal server error',
             data: []
         });
     }
 };
-

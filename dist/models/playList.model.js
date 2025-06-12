@@ -38,8 +38,8 @@ const mongoose_1 = __importStar(require("mongoose"));
 const PlaylistSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     createdBy: { type: mongoose_1.Schema.Types.ObjectId, ref: "User", required: true },
-    songs: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Song" }], // Relación con canciones
-    status: { type: Boolean, default: true }, // Estado de la playlist
+    songs: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'Song' }],
+    status: { type: Boolean, default: true },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
 });
