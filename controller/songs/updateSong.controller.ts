@@ -21,12 +21,14 @@ export const updateMySong = async (
             return;
         }
 
-        const { name, category, url } = req.body;
+        const { name, category, linkSong, fileSong, fileScore } = req.body;
         const updatedAt =  Date.now();
         // Buscar y actualizar la canción
+        
+
         const updatedSong = await songsModel.findOneAndUpdate(
             { _id: songId, user: userId },
-            { name, category, url, updatedAt },
+            { name, category, linkSong, fileSong, fileScore, updatedAt },
             // Opciones para devolver el documento actualizado y validar
             { new: true, runValidators: true }
         );
