@@ -12,6 +12,7 @@ const allsPlaylist_GET_controller_1 = require("../controller/playList/allsPlayli
 const userPlaylist_GET_controller_1 = require("../controller/playList/userPlaylist.GET.controller");
 const updatePlaylist_controller_1 = require("../controller/playList/updatePlaylist.controller");
 const deletePlaylist_controller_1 = require("../controller/playList/deletePlaylist.controller");
+const getPlaylistById_controller_1 = require("../controller/playList/getPlaylistById.controller");
 const router = (0, express_1.Router)();
 router.post(`/playlists`, auth_middleware_1.default, (0, validateRole_1.validateRole)([auth_1.Roles.Admin]), (req, res, next) => {
     (0, playlist_POST_controller_1.createPlaylist)(req, res).catch(next);
@@ -21,6 +22,9 @@ router.get(`/playlists`, auth_middleware_1.default, (req, res, next) => {
 });
 router.get(`/playlists/user`, auth_middleware_1.default, (0, validateRole_1.validateRole)([auth_1.Roles.Admin]), (req, res, next) => {
     (0, userPlaylist_GET_controller_1.userPlaylist)(req, res).catch(next);
+});
+router.get(`/playlists/:playlistId`, auth_middleware_1.default, (req, res, next) => {
+    (0, getPlaylistById_controller_1.getPlaylistById)(req, res, next);
 });
 router.put(`/playlists/:playlistId`, auth_middleware_1.default, (0, validateRole_1.validateRole)([auth_1.Roles.Admin]), (req, res, next) => {
     (0, updatePlaylist_controller_1.updatePlaylist)(req, res).catch(next);
