@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.userPlaylist = void 0;
 const playList_model_1 = __importDefault(require("../../models/playList.model"));
 const userPlaylist = async (req, res) => {
-    console.log("✅ ENTRÓ AL CONTROLADOR userPlaylist");
     try {
         // Extract user ID from authenticated request
         const userId = req.user ? req.user._id : null;
@@ -91,7 +90,6 @@ const userPlaylist = async (req, res) => {
                 linkSong: song.linkSong,
                 category: song.category
             }));
-            console.log("🎵 Songs transformadas:", songs);
             return {
                 _id: String(playlistObject._id),
                 name: playlistObject.name,
