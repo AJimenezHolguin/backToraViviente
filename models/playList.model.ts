@@ -14,8 +14,8 @@ export interface IPlaylist extends Document {
 const PlaylistSchema = new Schema<IPlaylist>({
   name: { type: String, required: true },
   createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
-  songs: [{ type: Schema.Types.ObjectId, ref: "Song" }], // Relación con canciones
-  status: { type: Boolean, default: true }, // Estado de la playlist
+  songs: [{ type: Schema.Types.ObjectId, ref: 'Song' }],
+  status: { type: Boolean, default: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });

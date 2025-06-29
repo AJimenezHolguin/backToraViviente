@@ -5,6 +5,8 @@ paths:
       description: Permite a un usuario autenticado crear una nueva canción.
       tags:
         - Canciones
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:

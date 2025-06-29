@@ -5,6 +5,8 @@ paths:
       description: Devuelve los detalles de una canción específica.
       tags:
         - Canciones
+      security:
+        - bearerAuth: []  # Requiere autenticación
       parameters:
         - name: id
           in: path

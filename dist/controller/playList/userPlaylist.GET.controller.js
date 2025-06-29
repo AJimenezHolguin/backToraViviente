@@ -69,7 +69,7 @@ const userPlaylist = async (req, res) => {
         })
             .populate({
             path: 'songs',
-            select: '_id title fileSong fileScore linkSong category' // Select specific song fields
+            select: '_id name fileSong fileScore linkSong category' // Select specific song fields
         });
         // Transform playlists to handle null createdBy and populate song details
         const transformedPlaylists = playlists.map(playlist => {
@@ -84,7 +84,7 @@ const userPlaylist = async (req, res) => {
             // Transform songs to ensure proper formatting
             const songs = playlistObject.songs.map((song) => ({
                 _id: String(song._id),
-                title: song.title,
+                title: song.name,
                 fileSong: song.fileSong,
                 fileScore: song.fileScore,
                 linkSong: song.linkSong,

@@ -42,12 +42,13 @@ interface TransformedPlaylist {
 }
 
 export const userPlaylist = async (req: Request, res: Response) => {
+
     try {
         // Extract user ID from authenticated request
         const userId = req.user ? (req.user as any)._id : null;
 
         // Destructure query parameters
-        const { page, take, order, search = '', sortBy = 'createdAt' } = req.query;
+        const { page, take, order, search = '', sortBy = 'createdAt' } = req.query as unknown as UserPlaylistQueryParams;
 
         // Validate that page, take, and order are present and valid
         if (
@@ -119,7 +120,7 @@ export const userPlaylist = async (req: Request, res: Response) => {
             })
             .populate({
                 path: 'songs',
-                select: '_id title fileSong fileScore linkSong category' // Select specific song fields
+                select: '_id name fileSong fileScore linkSong category' // Select specific song fields
             });
 
         // Transform playlists to handle null createdBy and populate song details
@@ -137,13 +138,13 @@ export const userPlaylist = async (req: Request, res: Response) => {
             // Transform songs to ensure proper formatting
             const songs: SongInfo[] = playlistObject.songs.map((song: any) => ({
                 _id: String(song._id),
-                title: song.title,
+                title: song.name,
                 fileSong: song.fileSong,
                 fileScore: song.fileScore,
                 linkSong: song.linkSong,
                 category: song.category
             }));
-
+        
             return {
                 _id: String(playlistObject._id),
                 name: playlistObject.name,

@@ -7,23 +7,17 @@ exports.allsPlaylist = void 0;
 const playList_model_1 = __importDefault(require("../../models/playList.model"));
 const allsPlaylist = async (req, res) => {
     try {
-        // Destructure query parameters
         const { page, take, order, search = '', sortBy = 'createdAt' } = req.query;
-        // Validate that page, take, and order are present and valid
-        if (page === undefined ||
-            take === undefined ||
-            order === undefined) {
+        if (!page || !take || !order) {
             return res.status(400).json({
                 success: false,
                 message: 'page, take, and order are mandatory query parameters',
                 data: []
             });
         }
-        // Convert to numbers and validate
         const pageNum = Number(page);
         const takeNum = Number(take);
         const orderStr = String(order).toUpperCase();
-        // Additional validation
         if (isNaN(pageNum) ||
             isNaN(takeNum) ||
             pageNum < 1 ||
@@ -35,43 +29,37 @@ const allsPlaylist = async (req, res) => {
                 data: []
             });
         }
-        // Prepare search query
         const searchQuery = {};
         if (search) {
-            searchQuery.name = { $regex: String(search), $options: 'i' };
+            searchQuery.name = { $regex: search, $options: 'i' };
         }
-        // Calculate pagination
         const skip = (pageNum - 1) * takeNum;
-        // Determine sort direction
         const sortDirection = orderStr === 'ASC' ? 1 : -1;
-        // Fetch playlists with pagination and optional search
         const playlists = await playList_model_1.default.find(searchQuery)
-            .sort({ [String(sortBy)]: sortDirection })
+            .sort({ [sortBy || 'createdAt']: sortDirection })
             .skip(skip)
             .limit(takeNum)
             .populate({
-            path: 'createdBy',
-            select: '_id name', // Only select _id and name
-            match: { _id: { $exists: true } } // Ensure only populated if createdBy exists
+            path: 'songs',
+            select: '_id name fileSong fileScore linkSong category'
         })
             .populate({
-            path: 'songs',
-            select: '_id title fileSong fileScore linkSong category' // Select specific song fields
+            path: 'createdBy',
+            select: '_id name'
         });
-        // Transform playlists to handle null createdBy and populate song details
         const transformedPlaylists = playlists.map(playlist => {
             const playlistObject = playlist.toObject();
-            // If createdBy is populated, extract _id and name
             const createdBy = playlistObject.createdBy && playlistObject.createdBy._id
                 ? {
                     _id: String(playlistObject.createdBy._id),
-                    name: String(playlistObject.createdBy.name || '')
+                    name: String(playlistObject.createdBy.name ?? '')
                 }
                 : null;
-            // Transform songs to ensure proper formatting
-            const songs = playlistObject.songs.map((song) => ({
+            const songs = (playlistObject.songs || [])
+                .filter((song) => song && song._id)
+                .map((song) => ({
                 _id: String(song._id),
-                title: song.title,
+                title: song.name,
                 fileSong: song.fileSong,
                 fileScore: song.fileScore,
                 linkSong: song.linkSong,
@@ -88,11 +76,9 @@ const allsPlaylist = async (req, res) => {
                 __v: playlistObject.__v
             };
         });
-        // Count total documents for pagination metadata
         const total = await playList_model_1.default.countDocuments(searchQuery);
-        // Calculate page count
         const pageCount = Math.ceil(total / takeNum);
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             data: transformedPlaylists,
             metadata: {
@@ -110,7 +96,7 @@ const allsPlaylist = async (req, res) => {
     }
     catch (error) {
         console.error('Error fetching playlists:', error);
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: 'Internal server error',
             data: []
