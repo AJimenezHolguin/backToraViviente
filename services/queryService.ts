@@ -62,8 +62,11 @@ export class QueryService {
         req.query.page = req.query.page || "1";
         req.query.take = req.query.take || "20";
         req.query.order = req.query.order || "ASC";
-        req.query.sortBy = req.query.sortBy || "createdAt";
+        if (!req.query.sortBy || req.query.sortBy.toString().trim() === "") {
+            delete req.query.sortBy;
+        }
         req.query.search = req.query.search || "";
+      
 
         next();
     }
@@ -76,12 +79,14 @@ export class QueryService {
         model: Model<T>,
         options: QueryOptions
     ) {
+        const sortBy = req.query.sortBy?.toString() || options.defaultSortField || "createdAt";
         const page = Number(req.query.page);
         const take = Number(req.query.take);
         const skip = (page - 1) * take;
 
+    
         const order = req.query.order === "DESC" ? -1 : 1;
-        const sortBy = req.query.sortBy?.toString() || options.defaultSortField || "createdAt";
+
         const search = req.query.search?.toString() || "";
 
         // Query base (condición opcional de userId)
@@ -111,13 +116,15 @@ export class QueryService {
         const hasNextPage = page < pageCount;
 
         const data = await model.find(query)
-            .populate({
-                path: 'user',
-                select: 'name' // Solo el nombre del usuario
-            })
-            .sort({ [sortBy]: order })
-            .skip(skip)
-            .limit(take);
+        .collation({ locale: "es", strength: 1 })
+        .sort({ [sortBy]: order })
+        .skip(skip)
+        .limit(take)
+        .populate({
+            path: 'user',
+            select: 'name' // Solo el nombre del usuario
+        });
+        
 
         return {
             data: data.map(item => {
