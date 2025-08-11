@@ -57,8 +57,6 @@ class QueryService {
             delete req.query.sortBy;
         }
         req.query.search = req.query.search || "";
-        // req.query.sortBy = req.query.sortBy || "createdAt";
-        // req.query.search = req.query.search || "";
         next();
     }
     /**
@@ -102,8 +100,6 @@ class QueryService {
             path: 'user',
             select: 'name' // Solo el nombre del usuario
         });
-        console.log("=== Orden en back ===");
-        console.log(data.map((song) => song.name)); //
         return {
             data: data.map(item => {
                 const obj = item.toObject();
