@@ -34,8 +34,8 @@ export const getSongsByUser: RequestHandler = async (
         // Ejecutar consulta usando el servicio
         const result = await QueryService.executeQuery(req, songsModel, {
             userId: userId,
+            defaultSortField: 'name',
             searchFields: ['name', 'category'],
-            defaultSortField: 'createdAt'
         });
 
         // No es necesario filtrar por user, ya que la query ya lo hace

@@ -53,19 +53,23 @@ class QueryService {
         req.query.page = req.query.page || "1";
         req.query.take = req.query.take || "20";
         req.query.order = req.query.order || "ASC";
-        req.query.sortBy = req.query.sortBy || "createdAt";
+        if (!req.query.sortBy || req.query.sortBy.toString().trim() === "") {
+            delete req.query.sortBy;
+        }
         req.query.search = req.query.search || "";
+        // req.query.sortBy = req.query.sortBy || "createdAt";
+        // req.query.search = req.query.search || "";
         next();
     }
     /**
      * Construye una consulta de mongoose con paginación, filtrado y búsqueda
      */
     static async executeQuery(req, model, options) {
+        const sortBy = req.query.sortBy?.toString() || options.defaultSortField || "createdAt";
         const page = Number(req.query.page);
         const take = Number(req.query.take);
         const skip = (page - 1) * take;
         const order = req.query.order === "DESC" ? -1 : 1;
-        const sortBy = req.query.sortBy?.toString() || options.defaultSortField || "createdAt";
         const search = req.query.search?.toString() || "";
         // Query base (condición opcional de userId)
         const query = {};
@@ -90,13 +94,16 @@ class QueryService {
         const hasPreviousPage = page > 1;
         const hasNextPage = page < pageCount;
         const data = await model.find(query)
+            .collation({ locale: "es", strength: 1 })
+            .sort({ [sortBy]: order })
+            .skip(skip)
+            .limit(take)
             .populate({
             path: 'user',
             select: 'name' // Solo el nombre del usuario
-        })
-            .sort({ [sortBy]: order })
-            .skip(skip)
-            .limit(take);
+        });
+        console.log("=== Orden en back ===");
+        console.log(data.map((song) => song.name)); //
         return {
             data: data.map(item => {
                 const obj = item.toObject();
