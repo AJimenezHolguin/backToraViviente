@@ -21,8 +21,8 @@ const getSongsByUser = async (req, res, next) => {
         // Ejecutar consulta usando el servicio
         const result = await queryService_1.QueryService.executeQuery(req, songs_model_1.default, {
             userId: userId,
+            defaultSortField: 'name',
             searchFields: ['name', 'category'],
-            defaultSortField: 'createdAt'
         });
         // No es necesario filtrar por user, ya que la query ya lo hace
         res.status(200).json({
