@@ -18,8 +18,8 @@ const authMiddleware = (
   res: Response,
   next: NextFunction
 ): void => {
-  const token = req.header("Authorization")?.split(" ")[1];
-
+  const token = req.header("Authorization")?.split(" ")[1]; 
+  
   if (!token) {
     res.status(401).json({ message: "Unauthorized" });
     return;
@@ -54,7 +54,7 @@ export const validateRole = (allowedRoles: Roles[]) => {
       res.status(403).json({ message: "Acceso denegado - Rol no permitido" });
       return;
     }
-
+  
     next();
   };
 };
