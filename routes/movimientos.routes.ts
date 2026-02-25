@@ -39,11 +39,4 @@ router.delete(
   deleteMovimiento
 );
 
-router.get("/movimientos/test", (req, res) => {
-  res.json({ ok: true,
-    message: "Ruta de prueba para movimientos"
-   });
-});
-
-
 export default router;

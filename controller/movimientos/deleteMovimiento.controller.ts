@@ -11,24 +11,22 @@ export const deleteMovimiento: RequestHandler = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
+  
+  const { id } = req.params;
 
-  const userId = req.user?._id;
-  if (!userId) {
+  if (!id) {
     res.status(401).json({
       success: false,
       message: "No autorizado"
     });
-    return;
   }
 
   try {
-    const { id } = req.params;
 
     const { data, error } = await supabase
       .from('movimientos')
       .delete()
       .eq('id', id)
-      .eq('user_id', userId)
       .select()
       .single();
 
@@ -39,7 +37,6 @@ export const deleteMovimiento: RequestHandler = async (
         success: false,
         message: "Movimiento no encontrado"
       });
-      return;
     }
 
     res.status(200).json({

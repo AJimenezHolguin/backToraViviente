@@ -29,7 +29,7 @@ export const getAllMovimientos: RequestHandler = async (
     let saldoAcumulado = 0;
 
     const movimientos = data.map(m => {
-      saldoAcumulado += m.saldo;
+      saldoAcumulado += (m.ingreso || 0) - (m.gasto || 0);
       return {
         ...m,
         saldo_acumulado: saldoAcumulado

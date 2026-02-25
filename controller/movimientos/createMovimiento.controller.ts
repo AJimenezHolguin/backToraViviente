@@ -53,8 +53,8 @@ export const createMovimiento: RequestHandler = async (
         descripcion,
         ingreso,
         gasto,
-        saldo,
-        user_id: userId // recomendado si luego filtras por usuario
+        // saldo,
+        // user_id: userId // recomendado si luego filtras por usuario
       }])
       .select()
       .single();
