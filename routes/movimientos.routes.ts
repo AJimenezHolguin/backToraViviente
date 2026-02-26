@@ -6,7 +6,7 @@ import { validateRole } from "../middleware/validateRole";
 import { createMovimiento } from "../controller/movimientos/createMovimiento.controller";
 import { getAllMovimientos } from "../controller/movimientos/getAllMovimientos.controller";
 import { updateMovimiento } from "../controller/movimientos/updateMovimiento.controller";
-import { deleteMovimiento } from "../controller/movimientos/deleteMovimiento.controller";
+import { anulledMovimiento } from "../controller/movimientos/anulledMovimiento.controller";
 
 
 const router = Router();
@@ -32,11 +32,11 @@ router.put(
   updateMovimiento
 );
 
-router.delete(
-  `/movimientos/:id`,
+router.patch(
+  `/movimientos/:id/anulled`,
   authMiddleware,
   validateRole([Roles.Admin]),
-  deleteMovimiento
-);
+  anulledMovimiento
+)
 
 export default router;

@@ -21,6 +21,7 @@ export const getAllMovimientos: RequestHandler = async (
     const { data, error } = await supabase
       .from('movimientos')
       .select('*')
+      .eq('is_annulled', false) 
       .order('fecha', { ascending: true })
       .order('id', { ascending: true });
 

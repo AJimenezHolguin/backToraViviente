@@ -1,80 +1,87 @@
-import { Request, Response, NextFunction, RequestHandler } from "express";
+import { RequestHandler } from "express";
 import supabase from "../../db/supabaseClient";
 
-/**
- * @desc    Actualizar movimiento financiero
- * @route   PUT /api/movimientos/:id
- * @access  Privado (Admin)
- */
-export const updateMovimiento: RequestHandler = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+export const updateMovimiento: RequestHandler = async (req, res) => {
+  const { id } = req.params;
+  const { fecha, descripcion, ingreso, gasto } = req.body;
 
-  const userId = req.user?._id;
-  if (!userId) {
-    res.status(401).json({
+  if (!id) {
+    return res.status(400).json({
       success: false,
-      message: "No autorizado"
+      message: "ID requerido"
     });
-    return;
   }
 
   try {
-    const { id } = req.params;
-    const {
-      item,
-      fecha,
-      descripcion,
-      ingreso = 0,
-      gasto = 0
-    } = req.body;
+    // 1️⃣ Obtener movimiento actual
+    const { data: movimiento, error: fetchError } = await supabase
+      .from("movimientos")
+      .select("*")
+      .eq("id", id)
+      .single();
 
-    if (ingreso > 0 && gasto > 0) {
-      res.status(400).json({
+    if (fetchError || !movimiento) {
+      return res.status(404).json({
+        success: false,
+        message: "Movimiento no encontrado"
+      });
+    }
+
+    const now = new Date();
+    const fechaMovimiento = new Date(movimiento.fecha);
+
+    const mismoMes =
+      fechaMovimiento.getMonth() === now.getMonth() &&
+      fechaMovimiento.getFullYear() === now.getFullYear();
+
+    // 2️⃣ Validaciones de monto
+    if (ingreso && gasto) {
+      return res.status(400).json({
         success: false,
         message: "No puede existir ingreso y gasto al mismo tiempo"
       });
-      return;
     }
 
-    const saldo = ingreso - gasto;
+    if ((ingreso && ingreso < 0) || (gasto && gasto < 0)) {
+      return res.status(400).json({
+        success: false,
+        message: "Los montos no pueden ser negativos"
+      });
+    }
+
+    // 3️⃣ Si intenta modificar monto y no es del mes actual
+    if (!mismoMes && (ingreso !== undefined || gasto !== undefined)) {
+      return res.status(403).json({
+        success: false,
+        message: "No se pueden modificar montos de meses anteriores"
+      });
+    }
+
+    // 4️⃣ Construir objeto de actualización
+    const updateData: any = {};
+
+    if (fecha) updateData.fecha = fecha;
+    if (descripcion) updateData.descripcion = descripcion;
+    if (ingreso !== undefined) updateData.ingreso = ingreso;
+    if (gasto !== undefined) updateData.gasto = gasto;
 
     const { data, error } = await supabase
-      .from('movimientos')
-      .update({
-        item,
-        fecha,
-        descripcion,
-        ingreso,
-        gasto,
-        saldo
-      })
-      .eq('id', id)
-      .eq('user_id', userId)
+      .from("movimientos")
+      .update(updateData)
+      .eq("id", id)
       .select()
       .single();
 
     if (error) throw error;
 
-    if (!data) {
-      res.status(404).json({
-        success: false,
-        message: "Movimiento no encontrado"
-      });
-      return;
-    }
-
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      message: "Movimiento actualizado exitosamente",
+      message: "Movimiento actualizado correctamente",
       data
     });
 
   } catch (error: any) {
-    console.error("Error updateMovimiento:", error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Error al actualizar movimiento",
       error: error.message
