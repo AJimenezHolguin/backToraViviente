@@ -1,90 +1,121 @@
 import { RequestHandler } from "express";
 import supabase from "../../db/supabaseClient";
+import { AuthRequest } from "../../middleware/auth.middleware";
 
-export const updateMovimiento: RequestHandler = async (req, res) => {
-  const { id } = req.params;
-  const { fecha, descripcion, ingreso, gasto } = req.body;
-
-  if (!id) {
-    return res.status(400).json({
-      success: false,
-      message: "ID requerido"
-    });
-  }
-
+export const editarMovimiento: RequestHandler = async (
+  req: AuthRequest,
+  res
+) => {
   try {
-    // 1️⃣ Obtener movimiento actual
-    const { data: movimiento, error: fetchError } = await supabase
+    const user = req.user;
+    const { id } = req.params;
+    const { tipo, monto, descripcion } = req.body;
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "No autorizado",
+      });
+    }
+
+    // 🔎 Validaciones básicas
+    if (!tipo || !["ingreso", "gasto"].includes(tipo)) {
+      return res.status(400).json({
+        success: false,
+        message: "Tipo debe ser 'ingreso' o 'gasto'",
+      });
+    }
+
+    if (!monto || Number(monto) <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Monto inválido",
+      });
+    }
+
+    // 1️⃣ Buscar movimiento original
+    const { data: original, error: errorOriginal } = await supabase
       .from("movimientos")
       .select("*")
       .eq("id", id)
       .single();
 
-    if (fetchError || !movimiento) {
+    if (errorOriginal || !original) {
       return res.status(404).json({
         success: false,
-        message: "Movimiento no encontrado"
+        message: "Movimiento original no encontrado",
       });
     }
 
-    const now = new Date();
-    const fechaMovimiento = new Date(movimiento.fecha);
-
-    const mismoMes =
-      fechaMovimiento.getMonth() === now.getMonth() &&
-      fechaMovimiento.getFullYear() === now.getFullYear();
-
-    // 2️⃣ Validaciones de monto
-    if (ingreso && gasto) {
+    if (original.estado === "anulado") {
       return res.status(400).json({
         success: false,
-        message: "No puede existir ingreso y gasto al mismo tiempo"
+        message: "No se puede ajustar un movimiento anulado",
       });
     }
 
-    if ((ingreso && ingreso < 0) || (gasto && gasto < 0)) {
-      return res.status(400).json({
-        success: false,
-        message: "Los montos no pueden ser negativos"
-      });
-    }
-
-    // 3️⃣ Si intenta modificar monto y no es del mes actual
-    if (!mismoMes && (ingreso !== undefined || gasto !== undefined)) {
-      return res.status(403).json({
-        success: false,
-        message: "No se pueden modificar montos de meses anteriores"
-      });
-    }
-
-    // 4️⃣ Construir objeto de actualización
-    const updateData: any = {};
-
-    if (fecha) updateData.fecha = fecha;
-    if (descripcion) updateData.descripcion = descripcion;
-    if (ingreso !== undefined) updateData.ingreso = ingreso;
-    if (gasto !== undefined) updateData.gasto = gasto;
-
-    const { data, error } = await supabase
+    // 2️⃣ Obtener último saldo
+    const { data: ultimoMovimiento } = await supabase
       .from("movimientos")
-      .update(updateData)
-      .eq("id", id)
+      .select("saldo, numero_registro")
+      .order("numero_registro", { ascending: false })
+      .limit(1)
+      .single();
+
+    const ultimoSaldo = ultimoMovimiento
+      ? Number(ultimoMovimiento.saldo)
+      : 0;
+
+    const montoNumerico = Number(monto);
+
+    // 3️⃣ Calcular nuevo saldo
+    const nuevoSaldo =
+      tipo === "ingreso"
+        ? ultimoSaldo + montoNumerico
+        : ultimoSaldo - montoNumerico;
+
+
+    // 5️⃣ Construir descripción automática
+    const descripcionUsuario = descripcion
+      ? descripcion.trim()
+      : "Ajuste contable";
+
+    const descripcionFinal = `${descripcionUsuario} (Ajuste del asiento #${original.numero_registro})`;
+
+    // 6️⃣ Insertar nuevo asiento de ajuste
+    const { data: ajuste, error: errorAjuste } = await supabase
+      .from("movimientos")
+      .insert([
+        {
+          
+          fecha: new Date(),
+          descripcion: descripcionFinal,
+          tipo: "ajuste",
+          ingreso: tipo === "ingreso" ? montoNumerico : 0,
+          gasto: tipo === "gasto" ? montoNumerico : 0,
+          saldo: nuevoSaldo,
+          estado: "activo",
+          referencia_id: original.id,
+          usuario_uuid: user._id,
+          usuario_nombre: user.name,
+          usuario_correo: user.email,
+        },
+      ])
       .select()
       .single();
 
-    if (error) throw error;
+    if (errorAjuste) throw errorAjuste;
 
-    return res.status(200).json({
+    return res.status(201).json({
       success: true,
-      message: "Movimiento actualizado correctamente",
-      data
+      message: "Ajuste generado correctamente",
+      data: ajuste,
     });
-
   } catch (error: any) {
     return res.status(500).json({
       success: false,
-      message: "Error al actualizar movimiento",
-      error: error.message
+      message: "Error al generar ajuste",
+      error: error.message,
     });
   }
 };

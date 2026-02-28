@@ -5,7 +5,7 @@ import { validateRole } from "../middleware/validateRole";
 
 import { createMovimiento } from "../controller/movimientos/createMovimiento.controller";
 import { getAllMovimientos } from "../controller/movimientos/getAllMovimientos.controller";
-import { updateMovimiento } from "../controller/movimientos/updateMovimiento.controller";
+import { editarMovimiento } from "../controller/movimientos/updateMovimiento.controller";
 import { anulledMovimiento } from "../controller/movimientos/anulledMovimiento.controller";
 
 
@@ -25,11 +25,11 @@ router.get(
   getAllMovimientos
 );
 
-router.put(
-  `/movimientos/:id`,
+router.post(
+  `/movimientos/ajustar/:id`,
   authMiddleware,
   validateRole([Roles.Admin]),
-  updateMovimiento
+  editarMovimiento
 );
 
 router.patch(

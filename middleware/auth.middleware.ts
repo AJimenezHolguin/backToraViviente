@@ -9,6 +9,8 @@ const SECRET_KEY = process.env.JWT_SECRET as string;
 export interface AuthRequest extends Request {
   user?: {
     _id: string;
+    name?: string
+    email?: string;
     role: Roles;
   };
 }
@@ -28,9 +30,11 @@ const authMiddleware = (
   try {
     const verified = jwt.verify(token, SECRET_KEY) as {
       id: string;
+      name: string;
+      email: string;
       role: Roles;
     };
-    req.user = { _id: verified.id, role: verified.role }; // Incluye el ID y el rol del usuario en la solicitud
+    req.user = { _id: verified.id, role: verified.role, name: verified.name, email: verified.email }; // Incluye el ID y el rol del usuario en la solicitud
     next();
   } catch (error) {
     res.status(400).json({ message: "Token inválido" });
