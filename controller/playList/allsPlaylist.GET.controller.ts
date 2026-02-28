@@ -1,45 +1,9 @@
 import { Request, Response } from 'express';
 import Playlist, { IPlaylist } from '../../models/playList.model';
 import mongoose from 'mongoose';
+import { SongInfo, TransformedPlaylist } from '../../types/playlist';
+import { PlaylistQueryParams } from '../../types/pagination';
 
-interface PlaylistQueryParams {
-    page: number;
-    take: number;
-    order: 'ASC' | 'DESC';
-    search?: string;
-    sortBy?: string;
-}
-
-interface CreatedByInfo {
-    _id: string;
-    name: string;
-}
-
-interface SongInfo {
-    _id: string;
-    title: string;
-    fileSong?: {
-        public_id: string;
-        secure_url: string;
-    };
-    fileScore?: {
-        public_id: string;
-        secure_url: string;
-    };
-    linkSong?: string;
-    category?: string;
-}
-
-interface TransformedPlaylist {
-    _id: string;
-    name: string;
-    createdBy: CreatedByInfo | null;
-    songs: SongInfo[];
-    status: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-    __v?: number;
-}
 
 export const allsPlaylist = async (req: Request, res: Response) => {
     try {

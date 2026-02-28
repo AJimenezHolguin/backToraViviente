@@ -1,45 +1,9 @@
 import { Request, Response } from 'express';
 import Playlist, { IPlaylist } from '../../models/playList.model';
 import mongoose from 'mongoose';
+import { PlaylistQueryParams } from '../../types/pagination';
+import { SongInfo, TransformedPlaylist } from '../../types/playlist';
 
-interface UserPlaylistQueryParams {
-    page: number;
-    take: number;
-    order: 'ASC' | 'DESC';
-    search?: string;
-    sortBy?: string;
-}
-
-interface CreatedByInfo {
-    _id: string;
-    name: string;
-}
-
-interface SongInfo {
-    _id: string;
-    title: string;
-    fileSong?: {
-        public_id: string;
-        secure_url: string;
-    };
-    fileScore?: {
-        public_id: string;
-        secure_url: string;
-    };
-    linkSong?: string;
-    category?: string;
-}
-
-interface TransformedPlaylist {
-    _id: string;
-    name: string;
-    createdBy: CreatedByInfo | null;
-    songs: SongInfo[];
-    status: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-    __v?: number;
-}
 
 export const userPlaylist = async (req: Request, res: Response) => {
 
@@ -48,7 +12,7 @@ export const userPlaylist = async (req: Request, res: Response) => {
         const userId = req.user ? (req.user as any)._id : null;
 
         // Destructure query parameters
-        const { page, take, order, search = '', sortBy = 'createdAt' } = req.query as unknown as UserPlaylistQueryParams;
+        const { page, take, order, search = '', sortBy = 'createdAt' } = req.query as unknown as PlaylistQueryParams;
 
         // Validate that page, take, and order are present and valid
         if (

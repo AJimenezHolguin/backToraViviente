@@ -6,3 +6,11 @@ export interface PaginationMeta {
     hasNextPage: boolean;
     hasPrevPage: boolean;
 }
+
+export interface PlaylistQueryParams {
+    page: number;
+    take: number;
+    order: 'ASC' | 'DESC';
+    search?: string;
+    sortBy?: string;
+}
