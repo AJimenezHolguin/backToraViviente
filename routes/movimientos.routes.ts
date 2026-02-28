@@ -33,7 +33,7 @@ router.post(
 );
 
 router.patch(
-  `/movimientos/:id/anulled`,
+  `/movimientos/anulled/:id`,
   authMiddleware,
   validateRole([Roles.Admin]),
   anulledMovimiento
