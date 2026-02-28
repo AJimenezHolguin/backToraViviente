@@ -8,7 +8,6 @@ export const createMovimiento: RequestHandler = async (
 ) => {
   try {
     const user = req.user;
-    console.log(user)
 
     if (!user) {
       return res.status(401).json({
@@ -21,15 +20,22 @@ export const createMovimiento: RequestHandler = async (
       fecha,
       descripcion,
       tipo,
-      ingreso = 0,
-      gasto = 0,
+      monto,
       referencia_id = null,
     } = req.body;
 
-    if (!fecha || !descripcion || !tipo) {
+    // 🔎 Validaciones básicas
+    if (!fecha || !descripcion || !tipo || !monto) {
       return res.status(400).json({
         success: false,
-        message: "Fecha, descripción y tipo son obligatorios",
+        message: "Fecha, descripción, tipo y monto son obligatorios",
+      });
+    }
+
+    if(new Date(fecha)> new Date()){
+      return res.status(400).json({
+        success: false,
+        message: "La fecha no puede ser futura",
       });
     }
 
@@ -40,17 +46,10 @@ export const createMovimiento: RequestHandler = async (
       });
     }
 
-    if (tipo === "ingreso" && Number(ingreso) <= 0) {
+    if (Number(monto) <= 0) {
       return res.status(400).json({
         success: false,
-        message: "Ingreso debe ser mayor a 0",
-      });
-    }
-
-    if (tipo === "gasto" && Number(gasto) <= 0) {
-      return res.status(400).json({
-        success: false,
-        message: "Gasto debe ser mayor a 0",
+        message: "El monto debe ser mayor a 0",
       });
     }
 
@@ -66,10 +65,14 @@ export const createMovimiento: RequestHandler = async (
 
     const saldoAnterior = lastSaldo ? Number(lastSaldo.saldo) : 0;
 
-    const nuevoSaldo =
-      saldoAnterior + Number(ingreso || 0) - Number(gasto || 0);
+    const montoNumerico = Number(monto);
 
-    // 🧾 Insertar (sin numero_registro)
+    const ingreso = tipo === "ingreso" ? montoNumerico : 0;
+    const gasto = tipo === "gasto" ? montoNumerico : 0;
+
+    const nuevoSaldo = saldoAnterior + ingreso - gasto;
+
+    // 🧾 Insertar
     const { data, error } = await supabase
       .from("movimientos")
       .insert([
@@ -77,8 +80,8 @@ export const createMovimiento: RequestHandler = async (
           fecha,
           descripcion,
           tipo,
-          ingreso: tipo === "ingreso" ? Number(ingreso) : 0,
-          gasto: tipo === "gasto" ? Number(gasto) : 0,
+          ingreso,
+          gasto,
           saldo: nuevoSaldo,
           estado: "activo",
           referencia_id,
