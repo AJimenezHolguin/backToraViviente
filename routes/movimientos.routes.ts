@@ -2,11 +2,10 @@ import { Router } from "express";
 import authMiddleware from "../middleware/auth.middleware";
 import { Roles } from "../types/auth";
 import { validateRole } from "../middleware/validateRole";
-
 import { createMovimiento } from "../controller/movimientos/createMovimiento.controller";
 import { getAllMovimientos } from "../controller/movimientos/getAllMovimientos.controller";
-import { editarMovimiento } from "../controller/movimientos/updateMovimiento.controller";
-import { anulledMovimiento } from "../controller/movimientos/anulledMovimiento.controller";
+import { updateMovimiento } from "../controller/movimientos/updateMovimiento.controller";
+import { annulledMovimiento } from "../controller/movimientos/anulledMovimiento.controller";
 
 
 const router = Router();
@@ -29,14 +28,14 @@ router.post(
   `/movimientos/ajustar/:id`,
   authMiddleware,
   validateRole([Roles.Admin]),
-  editarMovimiento
+  updateMovimiento
 );
 
 router.patch(
   `/movimientos/anulled/:id`,
   authMiddleware,
   validateRole([Roles.Admin]),
-  anulledMovimiento
+  annulledMovimiento
 )
 
 export default router;
