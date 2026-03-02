@@ -2,12 +2,12 @@ import { Request, Response } from 'express';
 import Playlist, { IPlaylist } from '../../models/playList.model';
 import mongoose from 'mongoose';
 import { SongInfo, TransformedPlaylist } from '../../types/playlist';
-import { PlaylistQueryParams } from '../../types/pagination';
+import { BaseQueryParams } from '../../types/pagination';
 
 
 export const allsPlaylist = async (req: Request, res: Response) => {
     try {
-        const { page, take, order, search = '', sortBy = 'createdAt' } = req.query as unknown as PlaylistQueryParams;
+        const { page, take, order, search = '', sortBy = 'createdAt' } = req.query as unknown as BaseQueryParams;
 
         if (!page || !take || !order) {
             return res.status(400).json({
