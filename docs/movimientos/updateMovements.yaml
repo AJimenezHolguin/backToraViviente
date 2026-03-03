@@ -1,5 +1,5 @@
 paths:
-  /movements/update/{id}:
+  /api/movements/update/{id}:
     put:
       summary: Generar ajuste de movimiento
       description: Genera un ajuste contable basado en un movimiento existente.

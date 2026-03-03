@@ -3,10 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllMovimientos = void 0;
+exports.getAllMovements = void 0;
 const supabaseClient_1 = __importDefault(require("../../db/supabaseClient"));
 const supabaseQueryService_1 = require("../../services/supabaseQueryService");
-const getAllMovimientos = async (req, res) => {
+const getAllMovements = async (req, res) => {
     const userId = req.user?._id;
     if (!userId) {
         return res.status(401).json({
@@ -51,4 +51,4 @@ const getAllMovimientos = async (req, res) => {
         });
     }
 };
-exports.getAllMovimientos = getAllMovimientos;
+exports.getAllMovements = getAllMovements;

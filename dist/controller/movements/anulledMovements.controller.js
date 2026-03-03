@@ -3,9 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.annulledMovimiento = void 0;
+exports.annulledMovements = void 0;
 const supabaseClient_1 = __importDefault(require("../../db/supabaseClient"));
-const annulledMovimiento = async (req, res) => {
+const annulledMovements = async (req, res) => {
     try {
         const user = req.user;
         const { id } = req.params;
@@ -103,4 +103,4 @@ const annulledMovimiento = async (req, res) => {
         });
     }
 };
-exports.annulledMovimiento = annulledMovimiento;
+exports.annulledMovements = annulledMovements;

@@ -1,6 +1,6 @@
 paths:
-  /movements/anulled/{id}:
-    put:
+  /api/movements/anulled/{id}:
+    patch:
       summary: Anular movimiento contable
       description: Genera un asiento de anulación basado en un movimiento existente.
       tags:
