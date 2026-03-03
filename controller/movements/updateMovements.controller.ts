@@ -2,7 +2,7 @@ import { RequestHandler } from "express";
 import supabase from "../../db/supabaseClient";
 import { AuthRequest } from "../../middleware/auth.middleware";
 
-export const updateMovimiento: RequestHandler = async (
+export const updateMovements: RequestHandler = async (
   req: AuthRequest,
   res
 ) => {

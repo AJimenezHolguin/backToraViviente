@@ -6,7 +6,7 @@ import userRoutes from "./routes/user.routes";
 import songRoutes from "./routes/songs.routes";
 import playListRoutes from "./routes/playList.routes";
 import { setupSwagger } from "./docs/swagger";
-import movimientosRoutes from "./routes/movimientos.routes";
+import movementsRoutes from "./routes/movements.routes";
 
 dotenv.config();
 const app = express();
@@ -20,7 +20,7 @@ setupSwagger(app);
 app.use("/api", userRoutes);
 app.use("/api",songRoutes);
 app.use("/api",playListRoutes);
-app.use("/api", movimientosRoutes);
+app.use("/api", movementsRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`));

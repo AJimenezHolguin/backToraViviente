@@ -3,7 +3,7 @@ import supabase from "../../db/supabaseClient";
 import { SupabaseQueryService } from "../../services/supabaseQueryService";
 import { Movimiento } from "../../types/movimiento";
 
-export const getAllMovimientos: RequestHandler = async (req, res) => {
+export const getAllMovements: RequestHandler = async (req, res) => {
   const userId = req.user?._id;
 
   if (!userId) {
