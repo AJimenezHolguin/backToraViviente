@@ -37,12 +37,11 @@ paths:
           description: Término de búsqueda opcional
       responses:
         '200':
-          description: Lista de movimientos(asientos) contables.
-          components:
-  schemas:
-
-    Movimiento:
-      type: object
+          description: lista de movimientos obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
       properties:
         id:
           type: string
