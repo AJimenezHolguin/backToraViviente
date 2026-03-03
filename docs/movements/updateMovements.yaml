@@ -4,7 +4,7 @@ paths:
       summary: Generar ajuste de movimiento
       description: Genera un ajuste contable basado en un movimiento existente.
       tags:
-        - Movimientos
+        - Movements
       security:
         - bearerAuth: []
 

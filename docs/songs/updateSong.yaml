@@ -4,7 +4,7 @@ paths:
       summary: Actualizar una canción específica
       description: Permite a un usuario autenticado actualizar una canción que le pertenece.
       tags:
-        - Canciones
+        - Songs
       security:
         - bearerAuth: []  # Requiere autenticación
       parameters:

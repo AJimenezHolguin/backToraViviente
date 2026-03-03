@@ -4,7 +4,7 @@ paths:
       summary: Crear una nueva canción
       description: Permite a un usuario autenticado crear una nueva canción.
       tags:
-        - Canciones
+        - Songs
       security:
         - bearerAuth: []
       requestBody:
