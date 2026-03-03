@@ -1,6 +1,7 @@
 import { NextFunction, RequestHandler, Request, Response } from "express";
 import { QueryService } from "../../services/queryService";
 import songsModel from "../../models/songs.model";
+import { handlePaginationValidation, validatePaginationParams } from "../../utils/pagination.validation";
 
 /**
  * @desc    Obtener todas las canciones
@@ -18,7 +19,11 @@ declare global {
 }
 
 // Validación de parámetros
-export const getSongsValidation = QueryService.validateQueryParams();
+// export const getSongsValidation = QueryService.validateQueryParams();
+export const getSongsValidation = [
+    ...validatePaginationParams,
+    handlePaginationValidation,
+  ];
 
 export const getSongs: RequestHandler = async (
     req: Request,
