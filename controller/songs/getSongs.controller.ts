@@ -18,8 +18,7 @@ declare global {
     }
 }
 
-// Validación de parámetros
-// export const getSongsValidation = QueryService.validateQueryParams();
+
 export const getSongsValidation = [
     ...validatePaginationParams,
     handlePaginationValidation,
