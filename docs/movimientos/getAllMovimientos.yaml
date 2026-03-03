@@ -6,7 +6,7 @@ paths:
       tags:
         - Movimientos
       security:
-        - bearerAuth: []  # Require authentication
+        - bearerAuth: []
       parameters:
         - in: query
           name: page
@@ -25,161 +25,98 @@ paths:
           required: true
           schema:
             type: string
-            enum: 
+            enum:
               - ASC
               - DESC
-          description: Orden de los resultados (Ascendente o Descendente)
+          description: Orden de los resultados
         - in: query
           name: search
           required: false
           schema:
             type: string
           description: Término de búsqueda opcional
+
       responses:
-     '200':
-  description: Movimientos obtenidos exitosamente
-  content:
-    application/json:
-      schema:
-        type: object
-        properties:
-          success:
-            type: boolean
-            example: true
-          message:
-            type: string
-            example: "Movimientos obtenidos exitosamente"
-          data:
-            type: array
-            items:
-              type: object
-              properties:
-                id:
-                  type: string
-                  format: uuid
-                  example: "a9da68d5-b58e-45be-b538-4346c83285b4"
-                numero_registro:
-                  type: integer
-                  example: 1
-                fecha:
-                  type: string
-                  format: date
-                  example: "2026-02-28"
-                descripcion:
-                  type: string
-                  example: "ofrenda morim"
-                tipo:
-                  type: string
-                  enum:
-                    - ingreso
-                    - gasto
-                  example: "ingreso"
-                ingreso:
-                  type: number
-                  example: 50000
-                gasto:
-                  type: number
-                  example: 0
-                saldo:
-                  type: number
-                  example: 50000
-                estado:
-                  type: string
-                  enum:
-                    - activo
-                    - anulado
-                  example: "activo"
-                referencia_id:
-                  type: string
-                  format: uuid
-                  nullable: true
-                  example: null
-                usuario_uuid:
-                  type: string
-                  example: "6895042e08eb24f04cfd2194"
-                usuario_nombre:
-                  type: string
-                  example: "Anderson-Desarrollo"
-                usuario_correo:
-                  type: string
-                  format: email
-                  example: "desarrollo@toraviviente.com"
-                created_at:
-                  type: string
-                  format: date-time
-                  example: "2026-03-02T21:42:20.12043+00:00"
-          metadata:
-            type: object
-            properties:
-              page:
-                type: integer
-                example: 1
-              take:
-                type: integer
-                example: 10
-              total:
-                type: integer
-                example: 2
-              pageCount:
-                type: integer
-                example: 1
-              hasPreviousPage:
-                type: boolean
-                example: false
-              hasNextPage:
-                type: boolean
-                example: false
-              order:
-                type: string
-                example: "DESC"
-              sortBy:
-                type: string
-                example: "numero_registro"
-              search:
-                type: string
-                example: ""
-      example:
-        success: true
-        message: "Movimientos obtenidos exitosamente"
-        data:
-          - id: "a9da68d5-b58e-45be-b538-4346c83285b4"
-            numero_registro: 1
-            fecha: "2026-02-28"
-            descripcion: "ofrenda morim"
-            tipo: "ingreso"
-            ingreso: 50000
-            gasto: 0
-            saldo: 50000
-            estado: "activo"
-            referencia_id: null
-            usuario_uuid: "6895042e08eb24f04cfd2194"
-            usuario_nombre: "Anderson-Desarrollo"
-            usuario_correo: "desarrollo@toraviviente.com"
-            created_at: "2026-03-02T21:42:20.12043+00:00"
-          - id: "5a98e612-4ffe-43aa-ae08-d12dd46ad076"
-            numero_registro: 2
-            fecha: "2026-02-28"
-            descripcion: "ofrenda morim"
-            tipo: "ingreso"
-            ingreso: 150000
-            gasto: 0
-            saldo: 200000
-            estado: "activo"
-            referencia_id: null
-            usuario_uuid: "6895042e08eb24f04cfd2194"
-            usuario_nombre: "Anderson-Desarrollo"
-            usuario_correo: "desarrollo@toraviviente.com"
-            created_at: "2026-03-02T21:43:12.59171+00:00"
-        metadata:
-          page: 1
-          take: 10
-          total: 2
-          pageCount: 1
-          hasPreviousPage: false
-          hasNextPage: false
-          order: "DESC"
-          sortBy: "numero_registro"
-          search: ""
+        '200':
+          description: Movimientos obtenidos exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Movimientos obtenidos exitosamente"
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                        numero_registro:
+                          type: integer
+                        fecha:
+                          type: string
+                          format: date
+                        descripcion:
+                          type: string
+                        tipo:
+                          type: string
+                          enum:
+                            - ingreso
+                            - gasto
+                        ingreso:
+                          type: number
+                        gasto:
+                          type: number
+                        saldo:
+                          type: number
+                        estado:
+                          type: string
+                          enum:
+                            - activo
+                            - anulado
+                        referencia_id:
+                          type: string
+                          format: uuid
+                          nullable: true
+                        usuario_uuid:
+                          type: string
+                        usuario_nombre:
+                          type: string
+                        usuario_correo:
+                          type: string
+                          format: email
+                        created_at:
+                          type: string
+                          format: date-time
+                  metadata:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      take:
+                        type: integer
+                      total:
+                        type: integer
+                      pageCount:
+                        type: integer
+                      hasPreviousPage:
+                        type: boolean
+                      hasNextPage:
+                        type: boolean
+                      order:
+                        type: string
+                      sortBy:
+                        type: string
+                      search:
+                        type: string
+
         '401':
           description: No autorizado - Token inválido o faltante
           content:
@@ -193,7 +130,7 @@ paths:
                   message:
                     type: string
                     example: "No autorizado - Token inválido o faltante"
-        
+
         '500':
           description: Error al obtener movimientos.
           content:
