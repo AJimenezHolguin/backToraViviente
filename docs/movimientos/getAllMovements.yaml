@@ -1,5 +1,5 @@
 paths:
-  /api/movimientos:
+  /api/movements:
     get:
       summary: Obtener todas los movimientos
       description: Devuelve una lista de todos los movimientos contables disponibles.

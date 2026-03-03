@@ -1,12 +1,21 @@
 paths:
-  /api/movimiento/create:
-    post:
-      summary: Crear movimiento contable
-      description: Crea un nuevo movimiento contable (ingreso o gasto).
+  /movements/update/{id}:
+    put:
+      summary: Generar ajuste de movimiento
+      description: Genera un ajuste contable basado en un movimiento existente.
       tags:
         - Movimientos
       security:
         - bearerAuth: []
+
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: ID del movimiento a ajustar
 
       requestBody:
         required: true
@@ -15,18 +24,10 @@ paths:
             schema:
               type: object
               required:
-                - fecha
-                - descripcion
                 - tipo
                 - monto
+                - descripcion
               properties:
-                fecha:
-                  type: string
-                  format: date
-                  example: "2026-02-28"
-                descripcion:
-                  type: string
-                  example: "ofrenda morim"
                 tipo:
                   type: string
                   enum:
@@ -35,11 +36,14 @@ paths:
                   example: "ingreso"
                 monto:
                   type: number
-                  example: 150000
+                  example: 20000
+                descripcion:
+                  type: string
+                  example: "el ingreso era superior"
 
       responses:
-        '201':
-          description: Movimiento creado exitosamente
+        '200':
+          description: Ajuste generado correctamente
           content:
             application/json:
               schema:
@@ -50,39 +54,36 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: "Movimiento creado exitosamente"
+                    example: "Ajuste generado correctamente"
                   data:
                     type: object
                     properties:
                       id:
                         type: string
                         format: uuid
-                        example: "5a98e612-4ffe-43aa-ae08-d12dd46ad076"
+                        example: "cd6de06c-a0a4-4fed-bc25-3569a6ec1e28"
                       numero_registro:
                         type: integer
-                        example: 2
+                        example: 4
                       fecha:
                         type: string
                         format: date
-                        example: "2026-02-28"
+                        example: "2026-03-03"
                       descripcion:
                         type: string
-                        example: "ofrenda morim"
+                        example: "el ingreso era superior (Ajuste del asiento #1)"
                       tipo:
                         type: string
-                        enum:
-                          - ingreso
-                          - gasto
-                        example: "ingreso"
+                        example: "ajuste"
                       ingreso:
                         type: number
-                        example: 150000
+                        example: 20000
                       gasto:
                         type: number
                         example: 0
                       saldo:
                         type: number
-                        example: 200000
+                        example: 240000
                       estado:
                         type: string
                         enum:
@@ -92,8 +93,7 @@ paths:
                       referencia_id:
                         type: string
                         format: uuid
-                        nullable: true
-                        example: null
+                        example: "a9da68d5-b58e-45be-b538-4346c83285b4"
                       usuario_uuid:
                         type: string
                         example: "6895042e08eb24f04cfd2194"
@@ -107,7 +107,7 @@ paths:
                       created_at:
                         type: string
                         format: date-time
-                        example: "2026-03-02T21:43:12.59171+00:00"
+                        example: "2026-03-03T04:20:49.237616+00:00"
 
         '400':
           description: Datos inválidos o faltantes
@@ -137,6 +137,20 @@ paths:
                     type: string
                     example: "No autorizado - Token inválido o faltante"
 
+        '404':
+          description: Movimiento no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Movimiento no encontrado"
+
         '500':
           description: Error interno del servidor
           content:
@@ -149,7 +163,7 @@ paths:
                     example: false
                   message:
                     type: string
-                    example: "Error al crear el movimiento"
+                    example: "Error al generar el ajuste"
                   error:
                     type: string
                     example: "Detalles del error"

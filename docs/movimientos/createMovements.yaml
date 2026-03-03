@@ -1,0 +1,162 @@
+paths:
+  /api/movements/create:
+    post:
+      summary: Crear movimiento contable
+      description: Crea un nuevo movimiento contable (ingreso o gasto).
+      tags:
+        - Movimientos
+      security:
+        - bearerAuth: []
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - fecha
+                - descripcion
+                - tipo
+                - monto
+              properties:
+                fecha:
+                  type: string
+                  format: date
+                  example: "2026-02-28"
+                descripcion:
+                  type: string
+                  example: "ofrenda morim"
+                tipo:
+                  type: string
+                  enum:
+                    - ingreso
+                    - gasto
+                  example: "ingreso"
+                monto:
+                  type: number
+                  example: 150000
+
+      responses:
+        '201':
+          description: Movimiento creado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Movimiento creado exitosamente"
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                        example: "5a98e612-4ffe-43aa-ae08-d12dd46ad076"
+                      numero_registro:
+                        type: integer
+                        example: 2
+                      fecha:
+                        type: string
+                        format: date
+                        example: "2026-02-28"
+                      descripcion:
+                        type: string
+                        example: "ofrenda morim"
+                      tipo:
+                        type: string
+                        enum:
+                          - ingreso
+                          - gasto
+                        example: "ingreso"
+                      ingreso:
+                        type: number
+                        example: 150000
+                      gasto:
+                        type: number
+                        example: 0
+                      saldo:
+                        type: number
+                        example: 200000
+                      estado:
+                        type: string
+                        enum:
+                          - activo
+                          - anulado
+                        example: "activo"
+                      referencia_id:
+                        type: string
+                        format: uuid
+                        nullable: true
+                        example: null
+                      usuario_uuid:
+                        type: string
+                        example: "6895042e08eb24f04cfd2194"
+                      usuario_nombre:
+                        type: string
+                        example: "Anderson-Desarrollo"
+                      usuario_correo:
+                        type: string
+                        format: email
+                        example: "desarrollo@toraviviente.com"
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: "2026-03-02T21:43:12.59171+00:00"
+
+        '400':
+          description: Datos inválidos o faltantes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Datos inválidos o faltantes"
+
+        '401':
+          description: No autorizado - Token inválido o faltante
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "No autorizado - Token inválido o faltante"
+
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Error al crear el movimiento"
+                  error:
+                    type: string
+                    example: "Detalles del error"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
