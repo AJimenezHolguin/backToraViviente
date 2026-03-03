@@ -1,0 +1,165 @@
+paths:
+  /movements/anulled/{id}:
+    put:
+      summary: Anular movimiento contable
+      description: Genera un asiento de anulación basado en un movimiento existente.
+      tags:
+        - Movimientos
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: ID del movimiento a anular
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - descripcion
+              properties:
+                descripcion:
+                  type: string
+                  example: "ERROR EN EL REGISTRO DE ESTE AJUSTE"
+
+      responses:
+        '200':
+          description: Movimiento anulado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Movimiento anulado correctamente"
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                        example: "0dc66897-3184-4a72-bec1-35d277310b25"
+                      numero_registro:
+                        type: integer
+                        example: 6
+                      fecha:
+                        type: string
+                        format: date
+                        example: "2026-03-03"
+                      descripcion:
+                        type: string
+                        example: "ERROR EN EL REGISTRO DE ESTE AJUSTE (Anulación del asiento #1)"
+                      tipo:
+                        type: string
+                        example: "anulacion"
+                      ingreso:
+                        type: number
+                        example: 0
+                      gasto:
+                        type: number
+                        example: 50000
+                      saldo:
+                        type: number
+                        example: 340000
+                      estado:
+                        type: string
+                        enum:
+                          - activo
+                          - anulado
+                        example: "activo"
+                      referencia_id:
+                        type: string
+                        format: uuid
+                        example: "a9da68d5-b58e-45be-b538-4346c83285b4"
+                      usuario_uuid:
+                        type: string
+                        example: "6895042e08eb24f04cfd2194"
+                      usuario_nombre:
+                        type: string
+                        example: "Anderson-Desarrollo"
+                      usuario_correo:
+                        type: string
+                        format: email
+                        example: "desarrollo@toraviviente.com"
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: "2026-03-03T04:34:26.753682+00:00"
+
+        '400':
+          description: Datos inválidos o faltantes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Datos inválidos o faltantes"
+
+        '401':
+          description: No autorizado - Token inválido o faltante
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "No autorizado - Token inválido o faltante"
+
+        '404':
+          description: Movimiento no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Movimiento no encontrado"
+
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Error al anular el movimiento"
+                  error:
+                    type: string
+                    example: "Detalles del error"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
