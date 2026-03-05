@@ -1,7 +1,4 @@
 "use strict";
-// import { NextFunction, Request, Response } from "express";
-// import mongoose, { Model } from "mongoose";
-// import songsModel from "../models/songs.model";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.QueryService = void 0;
 const pagination_utils_1 = require("../utils/pagination.utils");
@@ -25,11 +22,23 @@ class QueryService {
             }));
         }
         const total = await model.countDocuments(query);
-        const data = await model
+        const documents = await model
             .find(query)
             .sort({ [String(sortBy)]: order === "ASC" ? 1 : -1 })
             .skip(skip)
-            .limit(take);
+            .limit(take)
+            .populate({
+            path: "user",
+            select: "name",
+        });
+        const data = documents.map((item) => {
+            const obj = item.toObject();
+            return {
+                ...obj,
+                userName: item.user?.name,
+                user: undefined,
+            };
+        });
         return {
             data,
             metadata: (0, pagination_utils_1.buildMetadata)(page, take, total, order, sortBy, search),
