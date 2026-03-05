@@ -17,29 +17,29 @@ export const createMovements: RequestHandler = async (
     }
 
     const {
-      fecha,
-      descripcion,
-      tipo,
+      date,
+      description,
+      type,
       monto,
-      referencia_id = null,
+      ref_id = null,
     } = req.body;
 
     // 🔎 Validaciones básicas
-    if (!fecha || !descripcion || !tipo || !monto) {
+    if (!date || !description || !type || !monto) {
       return res.status(400).json({
         success: false,
         message: "Fecha, descripción, tipo y monto son obligatorios",
       });
     }
 
-    if(new Date(fecha)> new Date()){
+    if(new Date(date)> new Date()){
       return res.status(400).json({
         success: false,
         message: "La fecha no puede ser futura",
       });
     }
 
-    if (!["ingreso", "gasto"].includes(tipo)) {
+    if (!["ingreso", "gasto"].includes(type)) {
       return res.status(400).json({
         success: false,
         message: "Tipo inválido",
@@ -53,11 +53,11 @@ export const createMovements: RequestHandler = async (
       });
     }
 
-    // 🔎 Obtener último saldo
+  
     const { data: lastSaldo, error: saldoError } = await supabase
-      .from("movimientos")
+      .from("movements")
       .select("saldo")
-      .order("numero_registro", { ascending: false })
+      .order("numReg", { ascending: false })
       .limit(1)
       .maybeSingle();
 
@@ -67,27 +67,27 @@ export const createMovements: RequestHandler = async (
 
     const montoNumerico = Number(monto);
 
-    const ingreso = tipo === "ingreso" ? montoNumerico : 0;
-    const gasto = tipo === "gasto" ? montoNumerico : 0;
+    const ingreso = type === "ingreso" ? montoNumerico : 0;
+    const gasto = type === "gasto" ? montoNumerico : 0;
 
     const nuevoSaldo = saldoAnterior + ingreso - gasto;
 
-    // 🧾 Insertar
+  
     const { data, error } = await supabase
-      .from("movimientos")
+      .from("movements")
       .insert([
         {
-          fecha,
-          descripcion,
-          tipo,
+          date,
+          description,
+          type,
           ingreso,
           gasto,
           saldo: nuevoSaldo,
-          estado: "activo",
-          referencia_id,
-          usuario_uuid: user._id,
-          usuario_nombre: user.name,
-          usuario_correo: user.email,
+          state: "activo",
+          ref_id,
+          user_uuid: user._id,
+          user_name: user.name,
+          user_email: user.email,
         },
       ])
       .select()

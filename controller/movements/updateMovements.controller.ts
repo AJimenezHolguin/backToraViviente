@@ -9,7 +9,7 @@ export const updateMovements: RequestHandler = async (
   try {
     const user = req.user;
     const { id } = req.params;
-    const { tipo, monto, descripcion } = req.body;
+    const { type, monto, description } = req.body;
 
     if (!user) {
       return res.status(401).json({
@@ -18,8 +18,8 @@ export const updateMovements: RequestHandler = async (
       });
     }
 
-    // 🔎 Validaciones básicas
-    if (!tipo || !["ingreso", "gasto"].includes(tipo)) {
+ 
+    if (!type || !["ingreso", "gasto"].includes(type)) {
       return res.status(400).json({
         success: false,
         message: "Tipo debe ser 'ingreso' o 'gasto'",
@@ -33,9 +33,9 @@ export const updateMovements: RequestHandler = async (
       });
     }
 
-    // 1️⃣ Buscar movimiento original
+   
     const { data: original, error: errorOriginal } = await supabase
-      .from("movimientos")
+      .from("movements")
       .select("*")
       .eq("id", id)
       .single();
@@ -47,7 +47,7 @@ export const updateMovements: RequestHandler = async (
       });
     }
 
-    if (original.estado === "anulado") {
+    if (original.state === "anulado") {
       return res.status(400).json({
         success: false,
         message: "No se puede ajustar un movimiento anulado",
@@ -56,9 +56,9 @@ export const updateMovements: RequestHandler = async (
 
     // 2️⃣ Obtener último saldo
     const { data: ultimoMovimiento } = await supabase
-      .from("movimientos")
-      .select("saldo, numero_registro")
-      .order("numero_registro", { ascending: false })
+      .from("movements")
+      .select("saldo, numReg")
+      .order("numReg", { ascending: false })
       .limit(1)
       .single();
 
@@ -68,37 +68,36 @@ export const updateMovements: RequestHandler = async (
 
     const montoNumerico = Number(monto);
 
-    // 3️⃣ Calcular nuevo saldo
+   
     const nuevoSaldo =
-      tipo === "ingreso"
+    type === "ingreso"
         ? ultimoSaldo + montoNumerico
         : ultimoSaldo - montoNumerico;
 
 
-    // 5️⃣ Construir descripción automática
-    const descripcionUsuario = descripcion
-      ? descripcion.trim()
+
+    const descripcionUsuario = description
+      ? description.trim()
       : "Ajuste contable";
 
-    const descripcionFinal = `${descripcionUsuario} (Ajuste del asiento #${original.numero_registro})`;
+    const descripcionFinal = `${descripcionUsuario} (Ajuste del asiento #${original.numReg})`;
 
-    // 6️⃣ Insertar nuevo asiento de ajuste
+  
     const { data: ajuste, error: errorAjuste } = await supabase
-      .from("movimientos")
+      .from("movements")
       .insert([
-        {
-          
-          fecha: new Date(),
-          descripcion: descripcionFinal,
-          tipo: "ajuste",
-          ingreso: tipo === "ingreso" ? montoNumerico : 0,
-          gasto: tipo === "gasto" ? montoNumerico : 0,
+        {  
+          date: new Date(),
+          description: descripcionFinal,
+          type: "ajuste",
+          ingreso: type === "ingreso" ? montoNumerico : 0,
+          gasto: type === "gasto" ? montoNumerico : 0,
           saldo: nuevoSaldo,
-          estado: "activo",
-          referencia_id: original.id,
-          usuario_uuid: user._id,
-          usuario_nombre: user.name,
-          usuario_correo: user.email,
+          state: "activo",
+          ref_id: original.id,
+          user_uuid: user._id,
+          user_name: user.name,
+          user_email: user.email,
         },
       ])
       .select()

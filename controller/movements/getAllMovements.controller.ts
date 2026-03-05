@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import supabase from "../../db/supabaseClient";
 import { SupabaseQueryService } from "../../services/supabaseQueryService";
-import { Movimiento } from "../../types/movimiento";
+import { Movements } from "../../types/movements";
 
 export const getAllMovements: RequestHandler = async (req, res) => {
   const userId = req.user?._id;
@@ -14,22 +14,22 @@ export const getAllMovements: RequestHandler = async (req, res) => {
   }
 
   try {
-    const result = await SupabaseQueryService.executeQuery<Movimiento>(
+    const result = await SupabaseQueryService.executeQuery<Movements>(
       req,
       supabase,
       {
-        table: "movimientos",
-        defaultSortField: "numero_registro",
+        table: "movements",
+        defaultSortField: "numReg",
 
         filters: (query, req) => {
           const { status, month, year } = req.query;
 
           if (status === "activo") {
-            query = query.eq("estado", "activo");
+            query = query.eq("state", "activo");
           }
 
           if (status === "anulado") {
-            query = query.eq("estado", "anulado");
+            query = query.eq("state", "anulado");
           }
 
           if (month && year) {
@@ -37,8 +37,8 @@ export const getAllMovements: RequestHandler = async (req, res) => {
             const endDate = new Date(Number(year), Number(month), 0);
 
             query = query
-              .gte("fecha", startDate.toISOString())
-              .lte("fecha", endDate.toISOString());
+              .gte("date", startDate.toISOString())
+              .lte("date", endDate.toISOString());
           }
 
           return query;
