@@ -9,16 +9,15 @@ const annulledMovements = async (req, res) => {
     try {
         const user = req.user;
         const { id } = req.params;
-        const { descripcion } = req.body;
+        const { description } = req.body;
         if (!user) {
             return res.status(401).json({
                 success: false,
                 message: "No autorizado",
             });
         }
-        // 1️⃣ Buscar movimiento original
         const { data: original, error: errorOriginal } = await supabaseClient_1.default
-            .from("movimientos")
+            .from("movements")
             .select("*")
             .eq("id", id)
             .single();
@@ -28,14 +27,13 @@ const annulledMovements = async (req, res) => {
                 message: "Movimiento no encontrado",
             });
         }
-        // 2️⃣ Validaciones de negocio
-        if (original.estado === "anulado") {
+        if (original.state === "anulado") {
             return res.status(400).json({
                 success: false,
                 message: "El movimiento ya está anulado",
             });
         }
-        if (original.tipo === "anulacion") {
+        if (original.type === "anulacion") {
             return res.status(400).json({
                 success: false,
                 message: "No se puede anular un asiento de anulación",
@@ -43,49 +41,45 @@ const annulledMovements = async (req, res) => {
         }
         // 3️⃣ Obtener último saldo
         const { data: ultimoMovimiento } = await supabaseClient_1.default
-            .from("movimientos")
+            .from("movements")
             .select("saldo")
-            .order("numero_registro", { ascending: false })
+            .order("numReg", { ascending: false })
             .limit(1)
             .single();
         const ultimoSaldo = ultimoMovimiento
             ? Number(ultimoMovimiento.saldo)
             : 0;
-        // 4️⃣ Invertir efecto contable
         const ingresoAnulacion = original.gasto ? Number(original.gasto) : 0;
         const gastoAnulacion = original.ingreso ? Number(original.ingreso) : 0;
         const nuevoSaldo = ultimoSaldo + ingresoAnulacion - gastoAnulacion;
-        // 5️⃣ Construir descripción
-        const descripcionUsuario = descripcion
-            ? descripcion.trim()
+        const descriptionUser = description
+            ? description.trim()
             : "Anulación contable";
-        const descripcionFinal = `${descripcionUsuario} (Anulación del asiento #${original.numero_registro})`;
-        // 6️⃣ Insertar asiento de anulación
+        const descripcionFinal = `${descriptionUser} (Anulación del asiento #${original.numReg})`;
         const { data: anulacion, error: errorAnulacion } = await supabaseClient_1.default
-            .from("movimientos")
+            .from("movements")
             .insert([
             {
-                fecha: new Date(),
-                descripcion: descripcionFinal,
-                tipo: "anulacion",
+                date: new Date(),
+                description: descripcionFinal,
+                type: "anulacion",
                 ingreso: ingresoAnulacion,
                 gasto: gastoAnulacion,
                 saldo: nuevoSaldo,
-                estado: "activo",
-                referencia_id: original.id,
-                usuario_uuid: user._id,
-                usuario_nombre: user.name,
-                usuario_correo: user.email,
+                state: "activo",
+                ref_id: original.id,
+                user_uuid: user._id,
+                user_name: user.name,
+                user_email: user.email,
             },
         ])
             .select()
             .single();
         if (errorAnulacion)
             throw errorAnulacion;
-        // 7️⃣ Marcar original como anulado
         const { error: updateError } = await supabaseClient_1.default
-            .from("movimientos")
-            .update({ estado: "anulado" })
+            .from("movements")
+            .update({ state: "anulado" })
             .eq("id", original.id);
         if (updateError)
             throw updateError;

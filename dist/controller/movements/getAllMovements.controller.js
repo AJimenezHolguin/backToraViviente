@@ -16,22 +16,22 @@ const getAllMovements = async (req, res) => {
     }
     try {
         const result = await supabaseQueryService_1.SupabaseQueryService.executeQuery(req, supabaseClient_1.default, {
-            table: "movimientos",
-            defaultSortField: "numero_registro",
+            table: "movements",
+            defaultSortField: "numReg",
             filters: (query, req) => {
                 const { status, month, year } = req.query;
                 if (status === "activo") {
-                    query = query.eq("estado", "activo");
+                    query = query.eq("state", "activo");
                 }
                 if (status === "anulado") {
-                    query = query.eq("estado", "anulado");
+                    query = query.eq("state", "anulado");
                 }
                 if (month && year) {
                     const startDate = new Date(Number(year), Number(month) - 1, 1);
                     const endDate = new Date(Number(year), Number(month), 0);
                     query = query
-                        .gte("fecha", startDate.toISOString())
-                        .lte("fecha", endDate.toISOString());
+                        .gte("date", startDate.toISOString())
+                        .lte("date", endDate.toISOString());
                 }
                 return query;
             },

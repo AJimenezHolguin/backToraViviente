@@ -9,15 +9,14 @@ const updateMovements = async (req, res) => {
     try {
         const user = req.user;
         const { id } = req.params;
-        const { tipo, monto, descripcion } = req.body;
+        const { type, monto, description } = req.body;
         if (!user) {
             return res.status(401).json({
                 success: false,
                 message: "No autorizado",
             });
         }
-        // 🔎 Validaciones básicas
-        if (!tipo || !["ingreso", "gasto"].includes(tipo)) {
+        if (!type || !["ingreso", "gasto"].includes(type)) {
             return res.status(400).json({
                 success: false,
                 message: "Tipo debe ser 'ingreso' o 'gasto'",
@@ -29,9 +28,8 @@ const updateMovements = async (req, res) => {
                 message: "Monto inválido",
             });
         }
-        // 1️⃣ Buscar movimiento original
         const { data: original, error: errorOriginal } = await supabaseClient_1.default
-            .from("movimientos")
+            .from("movements")
             .select("*")
             .eq("id", id)
             .single();
@@ -41,7 +39,7 @@ const updateMovements = async (req, res) => {
                 message: "Movimiento original no encontrado",
             });
         }
-        if (original.estado === "anulado") {
+        if (original.state === "anulado") {
             return res.status(400).json({
                 success: false,
                 message: "No se puede ajustar un movimiento anulado",
@@ -49,40 +47,37 @@ const updateMovements = async (req, res) => {
         }
         // 2️⃣ Obtener último saldo
         const { data: ultimoMovimiento } = await supabaseClient_1.default
-            .from("movimientos")
-            .select("saldo, numero_registro")
-            .order("numero_registro", { ascending: false })
+            .from("movements")
+            .select("saldo, numReg")
+            .order("numReg", { ascending: false })
             .limit(1)
             .single();
         const ultimoSaldo = ultimoMovimiento
             ? Number(ultimoMovimiento.saldo)
             : 0;
         const montoNumerico = Number(monto);
-        // 3️⃣ Calcular nuevo saldo
-        const nuevoSaldo = tipo === "ingreso"
+        const nuevoSaldo = type === "ingreso"
             ? ultimoSaldo + montoNumerico
             : ultimoSaldo - montoNumerico;
-        // 5️⃣ Construir descripción automática
-        const descripcionUsuario = descripcion
-            ? descripcion.trim()
+        const descripcionUsuario = description
+            ? description.trim()
             : "Ajuste contable";
-        const descripcionFinal = `${descripcionUsuario} (Ajuste del asiento #${original.numero_registro})`;
-        // 6️⃣ Insertar nuevo asiento de ajuste
+        const descripcionFinal = `${descripcionUsuario} (Ajuste del asiento #${original.numReg})`;
         const { data: ajuste, error: errorAjuste } = await supabaseClient_1.default
-            .from("movimientos")
+            .from("movements")
             .insert([
             {
-                fecha: new Date(),
-                descripcion: descripcionFinal,
-                tipo: "ajuste",
-                ingreso: tipo === "ingreso" ? montoNumerico : 0,
-                gasto: tipo === "gasto" ? montoNumerico : 0,
+                date: new Date(),
+                description: descripcionFinal,
+                type: "ajuste",
+                ingreso: type === "ingreso" ? montoNumerico : 0,
+                gasto: type === "gasto" ? montoNumerico : 0,
                 saldo: nuevoSaldo,
-                estado: "activo",
-                referencia_id: original.id,
-                usuario_uuid: user._id,
-                usuario_nombre: user.name,
-                usuario_correo: user.email,
+                state: "activo",
+                ref_id: original.id,
+                user_uuid: user._id,
+                user_name: user.name,
+                user_email: user.email,
             },
         ])
             .select()
