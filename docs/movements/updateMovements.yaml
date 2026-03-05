@@ -24,11 +24,11 @@ paths:
             schema:
               type: object
               required:
-                - tipo
+                - type
                 - monto
-                - descripcion
+                - description
               properties:
-                tipo:
+                type:
                   type: string
                   enum:
                     - ingreso
@@ -37,7 +37,7 @@ paths:
                 monto:
                   type: number
                   example: 20000
-                descripcion:
+                description:
                   type: string
                   example: "el ingreso era superior"
 
@@ -62,17 +62,17 @@ paths:
                         type: string
                         format: uuid
                         example: "cd6de06c-a0a4-4fed-bc25-3569a6ec1e28"
-                      numero_registro:
+                      numReg:
                         type: integer
                         example: 4
-                      fecha:
+                      date:
                         type: string
                         format: date
                         example: "2026-03-03"
-                      descripcion:
+                      description:
                         type: string
                         example: "el ingreso era superior (Ajuste del asiento #1)"
-                      tipo:
+                      type:
                         type: string
                         example: "ajuste"
                       ingreso:
@@ -84,23 +84,23 @@ paths:
                       saldo:
                         type: number
                         example: 240000
-                      estado:
+                      state:
                         type: string
                         enum:
                           - activo
                           - anulado
                         example: "activo"
-                      referencia_id:
+                      ref_id:
                         type: string
                         format: uuid
                         example: "a9da68d5-b58e-45be-b538-4346c83285b4"
-                      usuario_uuid:
+                      user_uuid:
                         type: string
                         example: "6895042e08eb24f04cfd2194"
-                      usuario_nombre:
+                      user_name:
                         type: string
                         example: "Anderson-Desarrollo"
-                      usuario_correo:
+                      user_email:
                         type: string
                         format: email
                         example: "desarrollo@toraviviente.com"

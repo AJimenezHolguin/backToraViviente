@@ -15,19 +15,19 @@ paths:
             schema:
               type: object
               required:
-                - fecha
-                - descripcion
-                - tipo
+                - date
+                - description
+                - type
                 - monto
               properties:
-                fecha:
+                date:
                   type: string
                   format: date
                   example: "2026-02-28"
-                descripcion:
+                description:
                   type: string
                   example: "ofrenda morim"
-                tipo:
+                type:
                   type: string
                   enum:
                     - ingreso
@@ -58,17 +58,17 @@ paths:
                         type: string
                         format: uuid
                         example: "5a98e612-4ffe-43aa-ae08-d12dd46ad076"
-                      numero_registro:
+                      numReg:
                         type: integer
                         example: 2
-                      fecha:
+                      date:
                         type: string
                         format: date
                         example: "2026-02-28"
-                      descripcion:
+                      description:
                         type: string
                         example: "ofrenda morim"
-                      tipo:
+                      type:
                         type: string
                         enum:
                           - ingreso
@@ -83,24 +83,24 @@ paths:
                       saldo:
                         type: number
                         example: 200000
-                      estado:
+                      state:
                         type: string
                         enum:
                           - activo
                           - anulado
                         example: "activo"
-                      referencia_id:
+                      ref_id:
                         type: string
                         format: uuid
                         nullable: true
                         example: null
-                      usuario_uuid:
+                      user_uuid:
                         type: string
                         example: "6895042e08eb24f04cfd2194"
-                      usuario_nombre:
+                      user_name:
                         type: string
                         example: "Anderson-Desarrollo"
-                      usuario_correo:
+                      user_email:
                         type: string
                         format: email
                         example: "desarrollo@toraviviente.com"

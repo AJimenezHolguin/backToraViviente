@@ -24,9 +24,9 @@ paths:
             schema:
               type: object
               required:
-                - descripcion
+                - description
               properties:
-                descripcion:
+                description:
                   type: string
                   example: "ERROR EN EL REGISTRO DE ESTE AJUSTE"
 
@@ -51,17 +51,17 @@ paths:
                         type: string
                         format: uuid
                         example: "0dc66897-3184-4a72-bec1-35d277310b25"
-                      numero_registro:
+                      numReg:
                         type: integer
                         example: 6
-                      fecha:
+                      date:
                         type: string
                         format: date
                         example: "2026-03-03"
-                      descripcion:
+                      description:
                         type: string
                         example: "ERROR EN EL REGISTRO DE ESTE AJUSTE (Anulación del asiento #1)"
-                      tipo:
+                      type:
                         type: string
                         example: "anulacion"
                       ingreso:
@@ -73,23 +73,23 @@ paths:
                       saldo:
                         type: number
                         example: 340000
-                      estado:
+                      state:
                         type: string
                         enum:
                           - activo
                           - anulado
                         example: "activo"
-                      referencia_id:
+                      ref_id:
                         type: string
                         format: uuid
                         example: "a9da68d5-b58e-45be-b538-4346c83285b4"
-                      usuario_uuid:
+                      user_uuid:
                         type: string
                         example: "6895042e08eb24f04cfd2194"
-                      usuario_nombre:
+                      user_name:
                         type: string
                         example: "Anderson-Desarrollo"
-                      usuario_correo:
+                      user_email:
                         type: string
                         format: email
                         example: "desarrollo@toraviviente.com"

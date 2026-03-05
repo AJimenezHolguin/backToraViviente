@@ -58,14 +58,14 @@ paths:
                         id:
                           type: string
                           format: uuid
-                        numero_registro:
+                        numReg:
                           type: integer
-                        fecha:
+                        date:
                           type: string
                           format: date
-                        descripcion:
+                        description:
                           type: string
-                        tipo:
+                        type:
                           type: string
                           enum:
                             - ingreso
@@ -76,20 +76,20 @@ paths:
                           type: number
                         saldo:
                           type: number
-                        estado:
+                        state:
                           type: string
                           enum:
                             - activo
                             - anulado
-                        referencia_id:
+                        ref_id:
                           type: string
                           format: uuid
                           nullable: true
-                        usuario_uuid:
+                        user_uuid:
                           type: string
-                        usuario_nombre:
+                        user_name:
                           type: string
-                        usuario_correo:
+                        user_email:
                           type: string
                           format: email
                         created_at:
