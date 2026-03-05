@@ -13,7 +13,7 @@ export interface ISong extends Document {
   linkSong?: string;
   createdAt: Date;
   updatedAt: Date;
-  userName: mongoose.Types.ObjectId;
+  user: mongoose.Types.ObjectId;
   category?: string;
 }
 
@@ -21,7 +21,7 @@ const SongSchema = new Schema<ISong>({
   name: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
-  userName: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  user: { type: Schema.Types.ObjectId, ref: "User", required: true },
   fileSong: {
     public_id: { type: String },
     secure_url: { type: String },
