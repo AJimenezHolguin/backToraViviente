@@ -54,18 +54,21 @@ export const createMovements: RequestHandler = async (
     }
 
   
-    const { data: lastSaldo, error: saldoError } = await supabase
+    const { data: lastMovement, error: saldoError } = await supabase
       .from("movements")
-      .select("saldo")
+      .select("saldo, numReg")
       .order("numReg", { ascending: false })
       .limit(1)
       .maybeSingle();
 
     if (saldoError) throw saldoError;
 
-    const saldoAnterior = lastSaldo ? Number(lastSaldo.saldo) : 0;
+    const saldoAnterior = lastMovement ? Number(lastMovement.saldo) : 0;
 
     const montoNumerico = Number(monto);
+
+    const lastNumReg = lastMovement?.numReg ?? 0;
+    const nextNumReg = lastNumReg + 1;
 
     const ingreso = type === "ingreso" ? montoNumerico : 0;
     const gasto = type === "gasto" ? montoNumerico : 0;
@@ -77,6 +80,7 @@ export const createMovements: RequestHandler = async (
       .from("movements")
       .insert([
         {
+          numReg: nextNumReg,
           date,
           description,
           type,
