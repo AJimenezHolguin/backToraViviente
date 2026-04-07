@@ -6,6 +6,7 @@ import { createMovements } from "../controller/movements/createMovements.control
 import { getAllMovements } from "../controller/movements/getAllMovements.controller";
 import { updateMovements } from "../controller/movements/updateMovements.controller";
 import { annulledMovements } from "../controller/movements/anulledMovements.controller";
+import { getMovementById } from '../controller/movements/getMovementById.controller';
 
 
 
@@ -23,6 +24,13 @@ router.get(
   authMiddleware,
   validateRole([Roles.Admin]),
   getAllMovements
+);
+
+router.get(
+  `/movements/:id`,
+  authMiddleware,
+  validateRole([Roles.Admin]),
+  getMovementById
 );
 
 router.post(
