@@ -4,7 +4,7 @@ import { Roles } from "../types/auth";
 import { validateRole } from "../middleware/validateRole";
 import { createMovements } from "../controller/movements/createMovements.controller";
 import { getAllMovements } from "../controller/movements/getAllMovements.controller";
-import { updateMovements } from "../controller/movements/updateMovements.controller";
+import { createAdjustment } from '../controller/movements/createAdjustment.controller';
 import { annulledMovements } from "../controller/movements/anulledMovements.controller";
 import { getMovementById } from '../controller/movements/getMovementById.controller';
 
@@ -34,10 +34,10 @@ router.get(
 );
 
 router.post(
-  `/movements/update/:id`,
+  `/movements/adjust/:id`,
   authMiddleware,
   validateRole([Roles.Admin]),
-  updateMovements
+  createAdjustment
 );
 
 router.patch(

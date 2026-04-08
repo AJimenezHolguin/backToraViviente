@@ -2,7 +2,7 @@ import { RequestHandler } from "express";
 import supabase from "../../db/supabaseClient";
 import { AuthRequest } from "../../middleware/auth.middleware";
 
-export const updateMovements: RequestHandler = async (
+export const createAdjustment: RequestHandler = async (
   req: AuthRequest,
   res
 ) => {
@@ -18,7 +18,6 @@ export const updateMovements: RequestHandler = async (
       });
     }
 
- 
     if (!type || !["ingreso", "gasto"].includes(type)) {
       return res.status(400).json({
         success: false,
@@ -26,14 +25,15 @@ export const updateMovements: RequestHandler = async (
       });
     }
 
-    if (!monto || Number(monto) <= 0) {
+    const montoNumerico = Number(monto);
+
+    if (isNaN(montoNumerico) || montoNumerico <= 0) {
       return res.status(400).json({
         success: false,
         message: "Monto inválido",
       });
     }
 
-   
     const { data: original, error: errorOriginal } = await supabase
       .from("movements")
       .select("*")
@@ -54,7 +54,6 @@ export const updateMovements: RequestHandler = async (
       });
     }
 
-    // 2️⃣ Obtener último saldo
     const { data: ultimoMovimiento } = await supabase
       .from("movements")
       .select("saldo, numReg")
@@ -62,36 +61,36 @@ export const updateMovements: RequestHandler = async (
       .limit(1)
       .single();
 
-    const ultimoSaldo = ultimoMovimiento
-      ? Number(ultimoMovimiento.saldo)
-      : 0;
+    const ultimoSaldo = ultimoMovimiento ? Number(ultimoMovimiento.saldo) : 0;
 
-    const montoNumerico = Number(monto);
+    const nuevoNumReg = ultimoMovimiento ? ultimoMovimiento.numReg + 1 : 1;
 
-   
+    if (type === "gasto" && montoNumerico > ultimoSaldo) {
+      return res.status(400).json({
+        success: false,
+        message: "Saldo insuficiente",
+      });
+    }
+
     const nuevoSaldo =
-    type === "ingreso"
+      type === "ingreso"
         ? ultimoSaldo + montoNumerico
         : ultimoSaldo - montoNumerico;
 
+    const descripcionFinal = `${
+      description?.trim() || "Ajuste contable"
+    } (Ajuste del asiento #${original.numReg})`;
 
-
-    const descripcionUsuario = description
-      ? description.trim()
-      : "Ajuste contable";
-
-    const descripcionFinal = `${descripcionUsuario} (Ajuste del asiento #${original.numReg})`;
-
-  
     const { data: ajuste, error: errorAjuste } = await supabase
       .from("movements")
       .insert([
-        {  
+        {
           date: new Date(),
+          numReg: nuevoNumReg,
           description: descripcionFinal,
           type: "ajuste",
-          ingreso: type === "ingreso" ? montoNumerico : 0,
-          gasto: type === "gasto" ? montoNumerico : 0,
+          ingreso: type === "ingreso" ? montoNumerico : null,
+          gasto: type === "gasto" ? montoNumerico : null,
           saldo: nuevoSaldo,
           state: "activo",
           ref_id: original.id,

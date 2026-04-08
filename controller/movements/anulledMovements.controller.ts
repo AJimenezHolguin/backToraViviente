@@ -31,7 +31,6 @@ export const annulledMovements: RequestHandler = async (
       });
     }
 
-   
     if (original.state === "anulado") {
       return res.status(400).json({
         success: false,
@@ -42,42 +41,45 @@ export const annulledMovements: RequestHandler = async (
     if (original.type === "anulacion") {
       return res.status(400).json({
         success: false,
-        message: "No se puede anular un asiento de anulación",
+        message: "No se puede anular una anulación",
       });
     }
 
-    // 3️⃣ Obtener último saldo
     const { data: ultimoMovimiento } = await supabase
       .from("movements")
-      .select("saldo")
+      .select("saldo, numReg")
       .order("numReg", { ascending: false })
       .limit(1)
       .single();
 
-    const ultimoSaldo = ultimoMovimiento
-      ? Number(ultimoMovimiento.saldo)
-      : 0;
+    const ultimoSaldo = ultimoMovimiento ? Number(ultimoMovimiento.saldo) : 0;
 
+    const nuevoNumReg = ultimoMovimiento ? ultimoMovimiento.numReg + 1 : 1;
 
-    const ingresoAnulacion = original.gasto ? Number(original.gasto) : 0;
-    const gastoAnulacion = original.ingreso ? Number(original.ingreso) : 0;
+    const ingresoAnulacion = original.gasto ? Number(original.gasto) : null;
+
+    const gastoAnulacion = original.ingreso ? Number(original.ingreso) : null;
+
+    if (gastoAnulacion && gastoAnulacion > ultimoSaldo) {
+      return res.status(400).json({
+        success: false,
+        message: "No se puede anular porque generaría saldo negativo",
+      });
+    }
 
     const nuevoSaldo =
-      ultimoSaldo + ingresoAnulacion - gastoAnulacion;
+      ultimoSaldo + (ingresoAnulacion || 0) - (gastoAnulacion || 0);
 
-  
-    const descriptionUser = description
-      ? description.trim()
-      : "Anulación contable";
+    const descripcionFinal = `${
+      description?.trim() || "Anulación contable"
+    } (Anulación del asiento #${original.numReg})`;
 
-    const descripcionFinal = `${descriptionUser} (Anulación del asiento #${original.numReg})`;
-
-   
     const { data: anulacion, error: errorAnulacion } = await supabase
       .from("movements")
       .insert([
         {
           date: new Date(),
+          numReg: nuevoNumReg,
           description: descripcionFinal,
           type: "anulacion",
           ingreso: ingresoAnulacion,
@@ -94,7 +96,6 @@ export const annulledMovements: RequestHandler = async (
       .single();
 
     if (errorAnulacion) throw errorAnulacion;
-
 
     const { error: updateError } = await supabase
       .from("movements")

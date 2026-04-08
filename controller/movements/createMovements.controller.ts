@@ -16,23 +16,16 @@ export const createMovements: RequestHandler = async (
       });
     }
 
-    const {
-      date,
-      description,
-      type,
-      monto,
-      ref_id = null,
-    } = req.body;
+    const { date, description, type, monto, ref_id = null } = req.body;
 
-    // 🔎 Validaciones básicas
-    if (!date || !description || !type || !monto) {
+    if (!date || !description || !type || monto === undefined) {
       return res.status(400).json({
         success: false,
         message: "Fecha, descripción, tipo y monto son obligatorios",
       });
     }
 
-    if(new Date(date)> new Date()){
+    if (new Date(date) > new Date()) {
       return res.status(400).json({
         success: false,
         message: "La fecha no puede ser futura",
@@ -46,14 +39,15 @@ export const createMovements: RequestHandler = async (
       });
     }
 
-    if (Number(monto) <= 0) {
+    const montoNumerico = Number(monto);
+
+    if (isNaN(montoNumerico) || montoNumerico <= 0) {
       return res.status(400).json({
         success: false,
-        message: "El monto debe ser mayor a 0",
+        message: "El monto debe ser un número mayor a 0",
       });
     }
 
-  
     const { data: lastMovement, error: saldoError } = await supabase
       .from("movements")
       .select("saldo, numReg")
@@ -65,17 +59,24 @@ export const createMovements: RequestHandler = async (
 
     const saldoAnterior = lastMovement ? Number(lastMovement.saldo) : 0;
 
-    const montoNumerico = Number(monto);
-
     const lastNumReg = lastMovement?.numReg ?? 0;
     const nextNumReg = lastNumReg + 1;
 
-    const ingreso = type === "ingreso" ? montoNumerico : 0;
-    const gasto = type === "gasto" ? montoNumerico : 0;
+    if (type === "gasto" && montoNumerico > saldoAnterior) {
+      return res.status(400).json({
+        success: false,
+        message: "Saldo insuficiente para realizar el gasto",
+      });
+    }
 
-    const nuevoSaldo = saldoAnterior + ingreso - gasto;
+    const ingreso = type === "ingreso" ? montoNumerico : null;
+    const gasto = type === "gasto" ? montoNumerico : null;
 
-  
+    const nuevoSaldo =
+      type === "ingreso"
+        ? saldoAnterior + montoNumerico
+        : saldoAnterior - montoNumerico;
+
     const { data, error } = await supabase
       .from("movements")
       .insert([
