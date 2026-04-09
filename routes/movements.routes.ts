@@ -7,8 +7,7 @@ import { getAllMovements } from "../controller/movements/getAllMovements.control
 import { createAdjustment } from '../controller/movements/createAdjustment.controller';
 import { annulledMovements } from "../controller/movements/anulledMovements.controller";
 import { getMovementById } from '../controller/movements/getMovementById.controller';
-
-
+import { getNextMovementNumReg } from "../controller/movements/getNextMovementNumReg.controller";
 
 const router = Router();
 
@@ -27,11 +26,19 @@ router.get(
 );
 
 router.get(
+  `/movements/next-num-reg`,
+  authMiddleware,
+  validateRole([Roles.Admin]),
+  getNextMovementNumReg 
+);
+
+router.get(
   `/movements/:id`,
   authMiddleware,
   validateRole([Roles.Admin]),
   getMovementById
 );
+
 
 router.post(
   `/movements/adjust/:id`,
