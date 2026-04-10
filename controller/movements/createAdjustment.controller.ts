@@ -59,6 +59,8 @@ export const createAdjustment: RequestHandler = async (
 
     const inputDate = new Date();
 
+    
+
     if (original.state === "anulado") {
       return res.status(400).json({
         success: false,
@@ -115,6 +117,13 @@ export const createAdjustment: RequestHandler = async (
       .single();
 
     if (errorAjuste) throw errorAjuste;
+
+    const { error: updateError } = await supabase
+      .from("movements")
+      .update({ state: "ajustado" })
+      .eq("id", original.id);
+
+      if (updateError) throw updateError;
 
     return res.status(201).json({
       success: true,

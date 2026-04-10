@@ -39,7 +39,7 @@ export const validateAccountingDate = (date: string | Date) => {
   }
 
   if (inputYear === currentYear && inputMonth === currentMonth - 1) {
-    if (currentDay > 9) {
+    if (currentDay > 15) {
       return {
         valid: false,
         message:

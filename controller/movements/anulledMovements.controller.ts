@@ -1,6 +1,7 @@
 import { RequestHandler } from "express";
 import supabase from "../../db/supabaseClient";
 import { AuthRequest } from "../../middleware/auth.middleware";
+import { validateAccountingDate } from "../../utils/validateAccountingDate";
 
 export const annulledMovements: RequestHandler = async (
   req: AuthRequest,
@@ -30,6 +31,16 @@ export const annulledMovements: RequestHandler = async (
         message: "Movimiento no encontrado",
       });
     }
+
+    const validationResult = validateAccountingDate(original.date);
+
+    if(!validationResult.valid) {
+      return res.status(400).json({
+        success: false,
+        message: validationResult.message,
+      });
+    }
+
 
     if (original.state === "anulado") {
       return res.status(400).json({

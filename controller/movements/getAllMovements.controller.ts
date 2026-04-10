@@ -32,6 +32,10 @@ export const getAllMovements: RequestHandler = async (req, res) => {
             query = query.eq("state", "anulado");
           }
 
+          if (status === "ajustado") {
+            query = query.eq("state", "ajustado");
+          }
+
           if (month && year) {
             const startDate = new Date(Number(year), Number(month) - 1, 1);
             const endDate = new Date(Number(year), Number(month), 0);
