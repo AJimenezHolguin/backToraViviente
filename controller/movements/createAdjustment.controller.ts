@@ -1,6 +1,7 @@
 import { RequestHandler } from "express";
 import supabase from "../../db/supabaseClient";
 import { AuthRequest } from "../../middleware/auth.middleware";
+import { validateAccountingDate } from "../../utils/validateAccountingDate";
 
 export const createAdjustment: RequestHandler = async (
   req: AuthRequest,
@@ -47,6 +48,17 @@ export const createAdjustment: RequestHandler = async (
       });
     }
 
+    const validationResult = validateAccountingDate(original.date);
+
+    if(!validationResult.valid) {
+      return res.status(400).json({
+        success: false,
+        message: validationResult.message,
+      });
+    }
+
+    const inputDate = new Date();
+
     if (original.state === "anulado") {
       return res.status(400).json({
         success: false,
@@ -85,7 +97,7 @@ export const createAdjustment: RequestHandler = async (
       .from("movements")
       .insert([
         {
-          date: new Date(),
+          date: inputDate,
           numReg: nuevoNumReg,
           description: descripcionFinal,
           type: "ajuste",
