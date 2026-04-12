@@ -45,14 +45,19 @@ export const annulledMovements: RequestHandler = async (
     if (original.state === "anulado") {
       return res.status(400).json({
         success: false,
-        message: "El movimiento ya está anulado",
+        message: "¡El movimiento ya está anulado, no es posible anularlo nuevamente!",
+      });
+    } else if (original.state === "ajustado") {
+      return res.status(400).json({
+        success: false,
+        message: "¡El movimiento ya esta ajustado, no es posible anularlo!",
       });
     }
 
     if (original.type === "anulacion") {
       return res.status(400).json({
         success: false,
-        message: "No se puede anular una anulación",
+        message: "¡No es posible anular un registro de tipo anulación!",
       });
     }
 
