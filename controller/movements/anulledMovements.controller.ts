@@ -34,23 +34,23 @@ export const annulledMovements: RequestHandler = async (
 
     const validationResult = validateAccountingDate(original.date);
 
-    if(!validationResult.valid) {
+    if (!validationResult.valid) {
       return res.status(400).json({
         success: false,
         message: validationResult.message,
       });
     }
 
-
     if (original.state === "anulado") {
       return res.status(400).json({
         success: false,
-        message: "¡El movimiento ya está anulado, no es posible anularlo nuevamente!",
+        message:
+          "¡El movimiento ya está anulado, no es posible anularlo nuevamente!",
       });
     } else if (original.state === "ajustado") {
       return res.status(400).json({
         success: false,
-        message: "¡El movimiento ya esta ajustado, no es posible anularlo!",
+        message: "¡El registro ya esta ajustado, no es posible anularlo!",
       });
     }
 
@@ -58,6 +58,11 @@ export const annulledMovements: RequestHandler = async (
       return res.status(400).json({
         success: false,
         message: "¡No es posible anular un registro de tipo anulación!",
+      });
+    } else if (original.type === "ajuste") {
+      return res.status(400).json({
+        success: false,
+        message: "¡No es posible anular un registro de tipo ajuste!",
       });
     }
 

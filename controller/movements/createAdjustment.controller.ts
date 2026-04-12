@@ -50,7 +50,7 @@ export const createAdjustment: RequestHandler = async (
 
     const validationResult = validateAccountingDate(original.date);
 
-    if(!validationResult.valid) {
+    if (!validationResult.valid) {
       return res.status(400).json({
         success: false,
         message: validationResult.message,
@@ -59,12 +59,15 @@ export const createAdjustment: RequestHandler = async (
 
     const inputDate = new Date();
 
-    
-
     if (original.state === "anulado") {
       return res.status(400).json({
         success: false,
-        message: "No se puede ajustar un movimiento anulado",
+        message: "¡No es posible ajustar un registro anulado!",
+      });
+    } else if (original.state === "ajustado") {
+      return res.status(400).json({
+        success: false,
+        message: "¡No es posible ajustar un registro ya ajustado!",
       });
     }
 
@@ -123,7 +126,7 @@ export const createAdjustment: RequestHandler = async (
       .update({ state: "ajustado" })
       .eq("id", original.id);
 
-      if (updateError) throw updateError;
+    if (updateError) throw updateError;
 
     return res.status(201).json({
       success: true,
