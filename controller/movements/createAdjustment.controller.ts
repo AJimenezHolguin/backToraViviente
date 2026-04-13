@@ -22,7 +22,7 @@ export const createAdjustment: RequestHandler = async (
     if (!type || !["ingreso", "gasto"].includes(type)) {
       return res.status(400).json({
         success: false,
-        message: "Tipo debe ser 'ingreso' o 'gasto'",
+        message: "El tipo de registro debe ser 'ingreso' o 'gasto'",
       });
     }
 
@@ -44,7 +44,7 @@ export const createAdjustment: RequestHandler = async (
     if (errorOriginal || !original) {
       return res.status(404).json({
         success: false,
-        message: "Movimiento original no encontrado",
+        message: "El movimiento original no ha sido encontrado",
       });
     }
 

@@ -87,7 +87,7 @@ export const createMovements: RequestHandler = async (
       .insert([
         {
           numReg: nextNumReg,
-          date: inputDate, // 🔥 usar fecha normalizada
+          date: inputDate,
           description,
           type,
           ingreso,

@@ -30,7 +30,7 @@ export const validateAccountingDate = (date: string | Date) => {
   if (inputDate > today) {
     return {
       valid: false,
-      message: "La fecha no puede ser futura",
+      message: "No es posible crear el registro, la fecha no puede ser futura",
     };
   }
 
