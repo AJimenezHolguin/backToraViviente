@@ -57,7 +57,9 @@ export const createAdjustment: RequestHandler = async (
       });
     }
 
-    const inputDate = new Date();
+    const inputDate = new Date(
+      new Date().toLocaleString("en-US", { timeZone: "America/Bogota" })
+    );
 
     if (original.state === "anulado") {
       return res.status(400).json({
