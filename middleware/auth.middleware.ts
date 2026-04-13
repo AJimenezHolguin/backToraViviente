@@ -23,7 +23,7 @@ const authMiddleware = (
   const token = req.header("Authorization")?.split(" ")[1]; 
   
   if (!token) {
-    res.status(401).json({ message: "Unauthorized" });
+    res.status(401).json({ message: "No autorizado - Token faltante" });
     return;
   }
 
@@ -37,7 +37,7 @@ const authMiddleware = (
     req.user = { _id: verified.id, role: verified.role, name: verified.name, email: verified.email }; // Incluye el ID y el rol del usuario en la solicitud
     next();
   } catch (error) {
-    res.status(400).json({ message: "Token inválido" });
+    res.status(401).json({ message: "Token inválido o expirado" });
   }
 };
 
