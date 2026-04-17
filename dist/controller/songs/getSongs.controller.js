@@ -21,7 +21,6 @@ const getSongs = async (req, res, next) => {
         return;
     }
     try {
-        // Ejecutar consulta usando el servicio
         const result = await queryService_1.QueryService.executeQuery(req, songs_model_1.default, {
             defaultSortField: 'name',
             searchFields: ['name', 'category'],
