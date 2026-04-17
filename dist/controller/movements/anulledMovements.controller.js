@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.annulledMovements = void 0;
 const supabaseClient_1 = __importDefault(require("../../db/supabaseClient"));
+const validateAccountingDate_1 = require("../../utils/validateAccountingDate");
 const annulledMovements = async (req, res) => {
     try {
         const user = req.user;
@@ -27,40 +28,61 @@ const annulledMovements = async (req, res) => {
                 message: "Movimiento no encontrado",
             });
         }
+        const validationResult = (0, validateAccountingDate_1.validateAccountingDate)(original.date);
+        if (!validationResult.valid) {
+            return res.status(400).json({
+                success: false,
+                message: validationResult.message,
+            });
+        }
         if (original.state === "anulado") {
             return res.status(400).json({
                 success: false,
-                message: "El movimiento ya está anulado",
+                message: "¡El movimiento ya está anulado, no es posible anularlo nuevamente!",
+            });
+        }
+        else if (original.state === "ajustado") {
+            return res.status(400).json({
+                success: false,
+                message: "¡El registro ya esta ajustado, no es posible anularlo!",
             });
         }
         if (original.type === "anulacion") {
             return res.status(400).json({
                 success: false,
-                message: "No se puede anular un asiento de anulación",
+                message: "¡No es posible anular un registro de tipo anulación!",
             });
         }
-        // 3️⃣ Obtener último saldo
+        else if (original.type === "ajuste") {
+            return res.status(400).json({
+                success: false,
+                message: "¡No es posible anular un registro de tipo ajuste!",
+            });
+        }
         const { data: ultimoMovimiento } = await supabaseClient_1.default
             .from("movements")
-            .select("saldo")
+            .select("saldo, numReg")
             .order("numReg", { ascending: false })
             .limit(1)
             .single();
-        const ultimoSaldo = ultimoMovimiento
-            ? Number(ultimoMovimiento.saldo)
-            : 0;
-        const ingresoAnulacion = original.gasto ? Number(original.gasto) : 0;
-        const gastoAnulacion = original.ingreso ? Number(original.ingreso) : 0;
-        const nuevoSaldo = ultimoSaldo + ingresoAnulacion - gastoAnulacion;
-        const descriptionUser = description
-            ? description.trim()
-            : "Anulación contable";
-        const descripcionFinal = `${descriptionUser} (Anulación del asiento #${original.numReg})`;
+        const ultimoSaldo = ultimoMovimiento ? Number(ultimoMovimiento.saldo) : 0;
+        const nuevoNumReg = ultimoMovimiento ? ultimoMovimiento.numReg + 1 : 1;
+        const ingresoAnulacion = original.gasto ? Number(original.gasto) : null;
+        const gastoAnulacion = original.ingreso ? Number(original.ingreso) : null;
+        if (gastoAnulacion && gastoAnulacion > ultimoSaldo) {
+            return res.status(400).json({
+                success: false,
+                message: "No se puede anular porque generaría saldo negativo",
+            });
+        }
+        const nuevoSaldo = ultimoSaldo + (ingresoAnulacion || 0) - (gastoAnulacion || 0);
+        const descripcionFinal = `${description?.trim() || "Anulación contable"} (Anulación del asiento #${original.numReg})`;
         const { data: anulacion, error: errorAnulacion } = await supabaseClient_1.default
             .from("movements")
             .insert([
             {
                 date: new Date(),
+                numReg: nuevoNumReg,
                 description: descripcionFinal,
                 type: "anulacion",
                 ingreso: ingresoAnulacion,

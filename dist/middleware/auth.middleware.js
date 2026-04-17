@@ -11,7 +11,7 @@ const SECRET_KEY = process.env.JWT_SECRET;
 const authMiddleware = (req, res, next) => {
     const token = req.header("Authorization")?.split(" ")[1];
     if (!token) {
-        res.status(401).json({ message: "Unauthorized" });
+        res.status(401).json({ message: "No autorizado - Token faltante" });
         return;
     }
     try {
@@ -20,7 +20,7 @@ const authMiddleware = (req, res, next) => {
         next();
     }
     catch (error) {
-        res.status(400).json({ message: "Token inválido" });
+        res.status(401).json({ message: "Token inválido o expirado" });
     }
 };
 /**

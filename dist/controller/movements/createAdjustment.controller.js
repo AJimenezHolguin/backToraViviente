@@ -3,9 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateMovements = void 0;
+exports.createAdjustment = void 0;
 const supabaseClient_1 = __importDefault(require("../../db/supabaseClient"));
-const updateMovements = async (req, res) => {
+const validateAccountingDate_1 = require("../../utils/validateAccountingDate");
+const createAdjustment = async (req, res) => {
     try {
         const user = req.user;
         const { id } = req.params;
@@ -19,10 +20,11 @@ const updateMovements = async (req, res) => {
         if (!type || !["ingreso", "gasto"].includes(type)) {
             return res.status(400).json({
                 success: false,
-                message: "Tipo debe ser 'ingreso' o 'gasto'",
+                message: "El tipo de registro debe ser 'ingreso' o 'gasto'",
             });
         }
-        if (!monto || Number(monto) <= 0) {
+        const montoNumerico = Number(monto);
+        if (isNaN(montoNumerico) || montoNumerico <= 0) {
             return res.status(400).json({
                 success: false,
                 message: "Monto inválido",
@@ -36,42 +38,57 @@ const updateMovements = async (req, res) => {
         if (errorOriginal || !original) {
             return res.status(404).json({
                 success: false,
-                message: "Movimiento original no encontrado",
+                message: "El movimiento original no ha sido encontrado",
             });
         }
+        const validationResult = (0, validateAccountingDate_1.validateAccountingDate)(original.date);
+        if (!validationResult.valid) {
+            return res.status(400).json({
+                success: false,
+                message: validationResult.message,
+            });
+        }
+        const inputDate = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Bogota" }));
         if (original.state === "anulado") {
             return res.status(400).json({
                 success: false,
-                message: "No se puede ajustar un movimiento anulado",
+                message: "¡No es posible ajustar un registro anulado!",
             });
         }
-        // 2️⃣ Obtener último saldo
+        else if (original.state === "ajustado") {
+            return res.status(400).json({
+                success: false,
+                message: "¡No es posible ajustar un registro ya ajustado!",
+            });
+        }
         const { data: ultimoMovimiento } = await supabaseClient_1.default
             .from("movements")
             .select("saldo, numReg")
             .order("numReg", { ascending: false })
             .limit(1)
             .single();
-        const ultimoSaldo = ultimoMovimiento
-            ? Number(ultimoMovimiento.saldo)
-            : 0;
-        const montoNumerico = Number(monto);
+        const ultimoSaldo = ultimoMovimiento ? Number(ultimoMovimiento.saldo) : 0;
+        const nuevoNumReg = ultimoMovimiento ? ultimoMovimiento.numReg + 1 : 1;
+        if (type === "gasto" && montoNumerico > ultimoSaldo) {
+            return res.status(400).json({
+                success: false,
+                message: "Saldo insuficiente",
+            });
+        }
         const nuevoSaldo = type === "ingreso"
             ? ultimoSaldo + montoNumerico
             : ultimoSaldo - montoNumerico;
-        const descripcionUsuario = description
-            ? description.trim()
-            : "Ajuste contable";
-        const descripcionFinal = `${descripcionUsuario} (Ajuste del asiento #${original.numReg})`;
+        const descripcionFinal = `${description?.trim() || "Ajuste contable"} (Ajuste del asiento #${original.numReg})`;
         const { data: ajuste, error: errorAjuste } = await supabaseClient_1.default
             .from("movements")
             .insert([
             {
-                date: new Date(),
+                date: inputDate,
+                numReg: nuevoNumReg,
                 description: descripcionFinal,
                 type: "ajuste",
-                ingreso: type === "ingreso" ? montoNumerico : 0,
-                gasto: type === "gasto" ? montoNumerico : 0,
+                ingreso: type === "ingreso" ? montoNumerico : null,
+                gasto: type === "gasto" ? montoNumerico : null,
                 saldo: nuevoSaldo,
                 state: "activo",
                 ref_id: original.id,
@@ -84,6 +101,12 @@ const updateMovements = async (req, res) => {
             .single();
         if (errorAjuste)
             throw errorAjuste;
+        const { error: updateError } = await supabaseClient_1.default
+            .from("movements")
+            .update({ state: "ajustado" })
+            .eq("id", original.id);
+        if (updateError)
+            throw updateError;
         return res.status(201).json({
             success: true,
             message: "Ajuste generado correctamente",
@@ -98,4 +121,4 @@ const updateMovements = async (req, res) => {
         });
     }
 };
-exports.updateMovements = updateMovements;
+exports.createAdjustment = createAdjustment;

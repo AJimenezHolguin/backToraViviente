@@ -1,12 +1,8 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAllSongs = exports.getSongsValidation = void 0;
-const queryService_1 = require("../../services/queryService");
-const songs_model_1 = __importDefault(require("../../models/songs.model"));
 const pagination_validation_1 = require("../../utils/pagination.validation");
+const song_service_1 = require("../../services/songs/song.service");
 exports.getSongsValidation = [
     ...pagination_validation_1.validatePaginationParams,
     pagination_validation_1.handlePaginationValidation,
@@ -21,10 +17,7 @@ const getAllSongs = async (req, res, next) => {
         return;
     }
     try {
-        const result = await queryService_1.QueryService.executeQuery(req, songs_model_1.default, {
-            defaultSortField: "name",
-            searchFields: ["name", "category"],
-        });
+        const result = await song_service_1.SongService.getAll(req);
         res.status(200).json({
             success: true,
             ...result,

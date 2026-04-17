@@ -40,7 +40,6 @@ export const getSongs: RequestHandler = async (
 
 
     try {
-        // Ejecutar consulta usando el servicio
         const result = await QueryService.executeQuery(req, songsModel, {
             defaultSortField: 'name',
             searchFields: ['name', 'category'],

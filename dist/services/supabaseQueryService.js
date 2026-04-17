@@ -20,7 +20,11 @@ class SupabaseQueryService {
         const total = count || 0;
         let dataQuery = supabase
             .from(options.table)
-            .select("*")
+            .select("*");
+        if (options.filters) {
+            dataQuery = options.filters(dataQuery, req);
+        }
+        dataQuery = dataQuery
             .order(sortBy, { ascending })
             .range(skip, skip + take - 1);
         const { data, error } = await dataQuery;

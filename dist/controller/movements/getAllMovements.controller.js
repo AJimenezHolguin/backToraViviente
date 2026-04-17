@@ -1,11 +1,7 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAllMovements = void 0;
-const supabaseClient_1 = __importDefault(require("../../db/supabaseClient"));
-const supabaseQueryService_1 = require("../../services/supabaseQueryService");
+const movement_service_1 = require("../../services/movement/movement.service");
 const getAllMovements = async (req, res) => {
     const userId = req.user?._id;
     if (!userId) {
@@ -15,27 +11,7 @@ const getAllMovements = async (req, res) => {
         });
     }
     try {
-        const result = await supabaseQueryService_1.SupabaseQueryService.executeQuery(req, supabaseClient_1.default, {
-            table: "movements",
-            defaultSortField: "numReg",
-            filters: (query, req) => {
-                const { status, month, year } = req.query;
-                if (status === "activo") {
-                    query = query.eq("state", "activo");
-                }
-                if (status === "anulado") {
-                    query = query.eq("state", "anulado");
-                }
-                if (month && year) {
-                    const startDate = new Date(Number(year), Number(month) - 1, 1);
-                    const endDate = new Date(Number(year), Number(month), 0);
-                    query = query
-                        .gte("date", startDate.toISOString())
-                        .lte("date", endDate.toISOString());
-                }
-                return query;
-            },
-        });
+        const result = await movement_service_1.MovementService.getAll(req);
         return res.status(200).json({
             success: true,
             message: "Movimientos obtenidos exitosamente",

@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createMovements = void 0;
+const validateAccountingDate_1 = require("./../../utils/validateAccountingDate");
 const supabaseClient_1 = __importDefault(require("../../db/supabaseClient"));
 const createMovements = async (req, res) => {
     try {
@@ -14,50 +15,61 @@ const createMovements = async (req, res) => {
                 message: "No autorizado",
             });
         }
-        const { date, description, type, monto, ref_id = null, } = req.body;
-        // 🔎 Validaciones básicas
-        if (!date || !description || !type || !monto) {
+        const { date, description, type, monto, ref_id = null } = req.body;
+        if (!date || !description || !type || monto === undefined) {
             return res.status(400).json({
                 success: false,
                 message: "Fecha, descripción, tipo y monto son obligatorios",
             });
         }
-        if (new Date(date) > new Date()) {
+        const validationResult = (0, validateAccountingDate_1.validateAccountingDate)(date);
+        if (!validationResult.valid) {
             return res.status(400).json({
                 success: false,
-                message: "La fecha no puede ser futura",
+                message: validationResult.message,
             });
         }
+        const inputDate = validationResult.date;
         if (!["ingreso", "gasto"].includes(type)) {
             return res.status(400).json({
                 success: false,
                 message: "Tipo inválido",
             });
         }
-        if (Number(monto) <= 0) {
+        const montoNumerico = Number(monto);
+        if (isNaN(montoNumerico) || montoNumerico <= 0) {
             return res.status(400).json({
                 success: false,
                 message: "El monto debe ser mayor a 0",
             });
         }
-        const { data: lastSaldo, error: saldoError } = await supabaseClient_1.default
+        const { data: lastMovement, error: saldoError } = await supabaseClient_1.default
             .from("movements")
-            .select("saldo")
+            .select("saldo, numReg")
             .order("numReg", { ascending: false })
             .limit(1)
             .maybeSingle();
         if (saldoError)
             throw saldoError;
-        const saldoAnterior = lastSaldo ? Number(lastSaldo.saldo) : 0;
-        const montoNumerico = Number(monto);
-        const ingreso = type === "ingreso" ? montoNumerico : 0;
-        const gasto = type === "gasto" ? montoNumerico : 0;
-        const nuevoSaldo = saldoAnterior + ingreso - gasto;
+        const saldoAnterior = lastMovement ? Number(lastMovement.saldo) : 0;
+        const nextNumReg = (lastMovement?.numReg ?? 0) + 1;
+        if (type === "gasto" && montoNumerico > saldoAnterior) {
+            return res.status(400).json({
+                success: false,
+                message: "Saldo insuficiente",
+            });
+        }
+        const ingreso = type === "ingreso" ? montoNumerico : null;
+        const gasto = type === "gasto" ? montoNumerico : null;
+        const nuevoSaldo = type === "ingreso"
+            ? saldoAnterior + montoNumerico
+            : saldoAnterior - montoNumerico;
         const { data, error } = await supabaseClient_1.default
             .from("movements")
             .insert([
             {
-                date,
+                numReg: nextNumReg,
+                date: inputDate,
                 description,
                 type,
                 ingreso,

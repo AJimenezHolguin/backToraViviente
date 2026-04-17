@@ -7,6 +7,7 @@ export interface MongoQueryOptions<T> {
   defaultSortField?: keyof T;
   userId?: string;
   userField?: string;
+  searchFields?: (keyof T)[];
   filters?: (query: FilterQuery<T>, req: Request) => FilterQuery<T>;
   populate?: any[];
 }

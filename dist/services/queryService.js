@@ -10,35 +10,33 @@ class QueryService {
         const sortBy = req.query.sortBy ||
             options.defaultSortField ||
             "createdAt";
+        let query = {};
+        const shouldFilterByUser = options.userId && options.userField;
+        if (shouldFilterByUser) {
+            query[options.userField] = options.userId;
+        }
         const search = req.query.search || "";
         const skip = (page - 1) * take;
-        const query = {};
         if (options.userId) {
-            query.user = options.userId;
+            const field = options.userField || "user";
+            query[field] = options.userId;
         }
-        if (search && options.searchFields?.length) {
-            query.$or = options.searchFields.map((field) => ({
-                [field]: { $regex: search, $options: "i" },
-            }));
+        if (options.filters) {
+            query = options.filters(query, req);
         }
         const total = await model.countDocuments(query);
-        const documents = await model
+        let mongoQuery = model
             .find(query)
             .sort({ [String(sortBy)]: order === "ASC" ? 1 : -1 })
             .skip(skip)
-            .limit(take)
-            .populate({
-            path: "user",
-            select: "name",
-        });
-        const data = documents.map((item) => {
-            const obj = item.toObject();
-            return {
-                ...obj,
-                userName: item.user?.name,
-                user: undefined,
-            };
-        });
+            .limit(take);
+        if (options.populate) {
+            options.populate.forEach((pop) => {
+                mongoQuery = mongoQuery.populate(pop);
+            });
+        }
+        const documents = await mongoQuery;
+        const data = documents.map((item) => item.toObject());
         return {
             data,
             metadata: (0, pagination_utils_1.buildMetadata)(page, take, total, order, sortBy, search),
