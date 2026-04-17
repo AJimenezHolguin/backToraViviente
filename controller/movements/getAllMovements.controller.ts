@@ -1,7 +1,5 @@
 import { RequestHandler } from "express";
-import supabase from "../../db/supabaseClient";
-import { SupabaseQueryService } from "../../services/supabaseQueryService";
-import { Movements } from "../../types/movements";
+import { MovementService } from '../../services/movement/movement.service';
 
 export const getAllMovements: RequestHandler = async (req, res) => {
   const userId = req.user?._id;
@@ -14,42 +12,8 @@ export const getAllMovements: RequestHandler = async (req, res) => {
   }
 
   try {
-    const result = await SupabaseQueryService.executeQuery<Movements>(
-      req,
-      supabase,
-      {
-        table: "movements",
-        defaultSortField: "numReg",
-
-        filters: (query, req) => {
-          const { status, month, year } = req.query;
-
-          if (status === "activo") {
-            query = query.eq("state", "activo");
-          }
-
-          if (status === "anulado") {
-            query = query.eq("state", "anulado");
-          }
-
-          if (status === "ajustado") {
-            query = query.eq("state", "ajustado");
-          }
-
-          if (month && year) {
-            const startDate = new Date(Number(year), Number(month) - 1, 1);
-            const endDate = new Date(Number(year), Number(month), 0);
-
-            query = query
-              .gte("date", startDate.toISOString())
-              .lte("date", endDate.toISOString());
-          }
-
-          return query;
-        },
-      }
-    );
-
+    const result = await MovementService.getAll(req);
+   
     return res.status(200).json({
       success: true,
       message: "Movimientos obtenidos exitosamente",

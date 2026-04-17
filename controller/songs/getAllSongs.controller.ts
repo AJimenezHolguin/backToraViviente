@@ -1,10 +1,9 @@
 import { NextFunction, RequestHandler, Request, Response } from "express";
-import { QueryService } from "../../services/queryService";
-import songsModel from "../../models/songs.model";
 import {
   handlePaginationValidation,
   validatePaginationParams,
 } from "../../utils/pagination.validation";
+import { SongService } from "../../services/songs/song.service";
 
 /**
  * @desc    Obtener todas las canciones
@@ -42,10 +41,7 @@ export const getAllSongs: RequestHandler = async (
   }
 
   try {
-    const result = await QueryService.executeQuery(req, songsModel, {
-      defaultSortField: "name",
-      searchFields: ["name", "category"],
-    });
+    const result = await SongService.getAll(req);
 
     res.status(200).json({
       success: true,

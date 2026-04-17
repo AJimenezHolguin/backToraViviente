@@ -1,10 +1,9 @@
 import { NextFunction, RequestHandler, Request, Response } from "express";
-import { QueryService } from "../../services/queryService";
-import songsModel from "../../models/songs.model";
 import {
   handlePaginationValidation,
   validatePaginationParams,
 } from "../../utils/pagination.validation";
+import { SongService } from "../../services/songs/song.service";
 
 declare global {
   namespace Express {
@@ -27,8 +26,10 @@ export const getSongsByUser: RequestHandler = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
+  
+  const userId = req.user?._id;
+  
   try {
-    const userId = req.user?._id;
     if (!userId) {
       res.status(401).json({
         success: false,
@@ -36,15 +37,9 @@ export const getSongsByUser: RequestHandler = async (
       });
       return;
     }
-
-    // Ejecutar consulta usando el servicio
-    const result = await QueryService.executeQuery(req, songsModel, {
-      userId: userId,
-      defaultSortField: "name",
-      searchFields: ["name", "category"],
-    });
-
-    // No es necesario filtrar por user, ya que la query ya lo hace
+  
+    const result = await SongService.getByUser(req, userId);
+   
     res.status(200).json({
       success: true,
       ...result,

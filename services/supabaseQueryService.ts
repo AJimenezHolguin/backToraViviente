@@ -33,7 +33,11 @@ export class SupabaseQueryService {
 
     let dataQuery = supabase
       .from(options.table)
-      .select("*")
+      .select("*");
+      if(options.filters){
+        dataQuery = options.filters(dataQuery, req);
+      }
+      dataQuery = dataQuery
       .order(sortBy, { ascending })
       .range(skip, skip + take - 1);
 
