@@ -34,11 +34,10 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-// Esquema de Playlist
 const PlaylistSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     createdBy: { type: mongoose_1.Schema.Types.ObjectId, ref: "User", required: true },
-    songs: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'Song' }],
+    songs: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Song" }],
     status: { type: Boolean, default: true },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },

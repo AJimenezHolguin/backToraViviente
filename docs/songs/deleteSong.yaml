@@ -4,7 +4,7 @@ paths:
       summary: Eliminar una canción específica
       description: Permite a un usuario autenticado eliminar una canción que le pertenece.
       tags:
-        - Canciones
+        - Songs
       security:
         - bearerAuth: []  # Requiere autenticación
       parameters:

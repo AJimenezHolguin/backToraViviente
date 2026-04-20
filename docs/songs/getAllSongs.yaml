@@ -4,7 +4,7 @@ paths:
       summary: Obtener todas las canciones
       description: Devuelve una lista de todas las canciones disponibles.
       tags:
-        - Canciones
+        - Songs
       security:
         - bearerAuth: []  # Require authentication
       parameters:

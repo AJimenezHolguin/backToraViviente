@@ -8,7 +8,7 @@
     "ts.check": "tsc --project tsconfig.json",
     "add-build": "git add dist",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --watch index.ts"
+    "dev": "nodemon --watch './**/*.ts' --exec 'ts-node' index.ts"
   },
   "pre-commit": [
     "ts.check",
@@ -33,10 +33,11 @@
     "typescript": "^5.8.2"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.95.3",
     "@types/mongoose": "^5.11.97",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.7",
+    "dotenv": "^16.6.1",
     "express": "^4.21.2",
     "express-validator": "^7.2.1",
     "jsonwebtoken": "^9.0.2",

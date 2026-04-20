@@ -1,0 +1,23 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const auth_middleware_1 = __importDefault(require("../middleware/auth.middleware"));
+const auth_1 = require("../types/auth");
+const validateRole_1 = require("../middleware/validateRole");
+const createMovements_controller_1 = require("../controller/movements/createMovements.controller");
+const getAllMovements_controller_1 = require("../controller/movements/getAllMovements.controller");
+const createAdjustment_controller_1 = require("../controller/movements/createAdjustment.controller");
+const anulledMovements_controller_1 = require("../controller/movements/anulledMovements.controller");
+const getMovementById_controller_1 = require("../controller/movements/getMovementById.controller");
+const getNextMovementNumReg_controller_1 = require("../controller/movements/getNextMovementNumReg.controller");
+const router = (0, express_1.Router)();
+router.post(`/movements/create`, auth_middleware_1.default, (0, validateRole_1.validateRole)([auth_1.Roles.Admin]), createMovements_controller_1.createMovements);
+router.get(`/movements`, auth_middleware_1.default, (0, validateRole_1.validateRole)([auth_1.Roles.Admin]), getAllMovements_controller_1.getAllMovements);
+router.get(`/movements/next-num-reg`, auth_middleware_1.default, (0, validateRole_1.validateRole)([auth_1.Roles.Admin]), getNextMovementNumReg_controller_1.getNextMovementNumReg);
+router.get(`/movements/:id`, auth_middleware_1.default, (0, validateRole_1.validateRole)([auth_1.Roles.Admin]), getMovementById_controller_1.getMovementById);
+router.post(`/movements/adjust/:id`, auth_middleware_1.default, (0, validateRole_1.validateRole)([auth_1.Roles.Admin]), createAdjustment_controller_1.createAdjustment);
+router.patch(`/movements/anulled/:id`, auth_middleware_1.default, (0, validateRole_1.validateRole)([auth_1.Roles.Admin]), anulledMovements_controller_1.annulledMovements);
+exports.default = router;
