@@ -1,0 +1,156 @@
+paths:
+  /api/movements:
+    get:
+      summary: Obtener todas los movimientos
+      description: Devuelve una lista de todos los movimientos contables disponibles.
+      tags:
+        - Movements
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: string
+          description: Número de página para la paginación
+        - in: query
+          name: take
+          required: true
+          schema:
+            type: string
+          description: Número de elementos por página
+        - in: query
+          name: order
+          required: true
+          schema:
+            type: string
+            enum:
+              - ASC
+              - DESC
+          description: Orden de los resultados
+        - in: query
+          name: search
+          required: false
+          schema:
+            type: string
+          description: Término de búsqueda opcional
+
+      responses:
+        '200':
+          description: Movimientos obtenidos exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Movimientos obtenidos exitosamente"
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                        numReg:
+                          type: integer
+                        date:
+                          type: string
+                          format: date
+                        description:
+                          type: string
+                        type:
+                          type: string
+                          enum:
+                            - ingreso
+                            - gasto
+                        ingreso:
+                          type: number
+                        gasto:
+                          type: number
+                        saldo:
+                          type: number
+                        state:
+                          type: string
+                          enum:
+                            - activo
+                            - anulado
+                        ref_id:
+                          type: string
+                          format: uuid
+                          nullable: true
+                        user_uuid:
+                          type: string
+                        user_name:
+                          type: string
+                        user_email:
+                          type: string
+                          format: email
+                        created_at:
+                          type: string
+                          format: date-time
+                  metadata:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      take:
+                        type: integer
+                      total:
+                        type: integer
+                      pageCount:
+                        type: integer
+                      hasPreviousPage:
+                        type: boolean
+                      hasNextPage:
+                        type: boolean
+                      order:
+                        type: string
+                      sortBy:
+                        type: string
+                      search:
+                        type: string
+
+        '401':
+          description: No autorizado - Token inválido o faltante
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "No autorizado - Token inválido o faltante"
+
+        '500':
+          description: Error al obtener movimientos.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Error al obtener movimientos"
+                  error:
+                    type: string
+                    example: "Detalles del error"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

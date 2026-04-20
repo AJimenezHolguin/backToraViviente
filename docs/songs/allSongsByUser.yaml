@@ -4,7 +4,7 @@ paths:
       summary: Obtener todas las canciones de un usuario
       description: Devuelve una lista de todas las canciones creadas por un usuario específico.
       tags:
-        - Canciones
+        - Songs
       security:
         - bearerAuth: []  # Require authentication
       parameters:

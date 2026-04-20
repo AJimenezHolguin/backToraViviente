@@ -18,8 +18,8 @@ const comparePasswords = async (password, hashedPassword) => {
 };
 exports.comparePasswords = comparePasswords;
 const generateToken = (user) => {
-    return jsonwebtoken_1.default.sign({ id: user._id, email: user.email, role: user.role }, SECRET_KEY, {
-        expiresIn: "2h",
+    return jsonwebtoken_1.default.sign({ id: user._id, email: user.email, name: user.name, role: user.role }, SECRET_KEY, {
+        expiresIn: "4h",
     });
 };
 exports.generateToken = generateToken;

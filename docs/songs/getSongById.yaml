@@ -4,7 +4,7 @@ paths:
       summary: Obtener una canción por ID
       description: Devuelve los detalles de una canción específica.
       tags:
-        - Canciones
+        - Songs
       security:
         - bearerAuth: []  # Requiere autenticación
       parameters:

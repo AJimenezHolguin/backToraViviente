@@ -6,8 +6,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getSongs = exports.getSongsValidation = void 0;
 const queryService_1 = require("../../services/queryService");
 const songs_model_1 = __importDefault(require("../../models/songs.model"));
-// Validación de parámetros
-exports.getSongsValidation = queryService_1.QueryService.validateQueryParams();
+const pagination_validation_1 = require("../../utils/pagination.validation");
+exports.getSongsValidation = [
+    ...pagination_validation_1.validatePaginationParams,
+    pagination_validation_1.handlePaginationValidation,
+];
 const getSongs = async (req, res, next) => {
     const userId = req.user?._id;
     if (!userId) {
@@ -18,7 +21,6 @@ const getSongs = async (req, res, next) => {
         return;
     }
     try {
-        // Ejecutar consulta usando el servicio
         const result = await queryService_1.QueryService.executeQuery(req, songs_model_1.default, {
             defaultSortField: 'name',
             searchFields: ['name', 'category'],

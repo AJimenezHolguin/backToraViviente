@@ -1,0 +1,176 @@
+paths:
+  /api/movements/update/{id}:
+    put:
+      summary: Generar ajuste de movimiento
+      description: Genera un ajuste contable basado en un movimiento existente.
+      tags:
+        - Movements
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: ID del movimiento a ajustar
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - type
+                - monto
+                - description
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - ingreso
+                    - gasto
+                  example: "ingreso"
+                monto:
+                  type: number
+                  example: 20000
+                description:
+                  type: string
+                  example: "el ingreso era superior"
+
+      responses:
+        '200':
+          description: Ajuste generado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Ajuste generado correctamente"
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                        example: "cd6de06c-a0a4-4fed-bc25-3569a6ec1e28"
+                      numReg:
+                        type: integer
+                        example: 4
+                      date:
+                        type: string
+                        format: date
+                        example: "2026-03-03"
+                      description:
+                        type: string
+                        example: "el ingreso era superior (Ajuste del asiento #1)"
+                      type:
+                        type: string
+                        example: "ajuste"
+                      ingreso:
+                        type: number
+                        example: 20000
+                      gasto:
+                        type: number
+                        example: 0
+                      saldo:
+                        type: number
+                        example: 240000
+                      state:
+                        type: string
+                        enum:
+                          - activo
+                          - anulado
+                        example: "activo"
+                      ref_id:
+                        type: string
+                        format: uuid
+                        example: "a9da68d5-b58e-45be-b538-4346c83285b4"
+                      user_uuid:
+                        type: string
+                        example: "6895042e08eb24f04cfd2194"
+                      user_name:
+                        type: string
+                        example: "Anderson-Desarrollo"
+                      user_email:
+                        type: string
+                        format: email
+                        example: "desarrollo@toraviviente.com"
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: "2026-03-03T04:20:49.237616+00:00"
+
+        '400':
+          description: Datos inválidos o faltantes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Datos inválidos o faltantes"
+
+        '401':
+          description: No autorizado - Token inválido o faltante
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "No autorizado - Token inválido o faltante"
+
+        '404':
+          description: Movimiento no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Movimiento no encontrado"
+
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Error al generar el ajuste"
+                  error:
+                    type: string
+                    example: "Detalles del error"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
