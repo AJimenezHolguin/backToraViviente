@@ -70,7 +70,7 @@ export const createMovements: RequestHandler = async (
     if (type === "gasto" && montoNumerico > saldoAnterior) {
       return res.status(400).json({
         success: false,
-        message: "Saldo insuficiente",
+        message: "¡No es posible crear el asiento contable por Saldo insuficiente!",
       });
     }
 
