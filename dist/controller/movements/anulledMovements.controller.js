@@ -35,6 +35,7 @@ const annulledMovements = async (req, res) => {
                 message: validationResult.message,
             });
         }
+        const inputDate = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Bogota" }));
         if (original.state === "anulado") {
             return res.status(400).json({
                 success: false,
@@ -72,7 +73,7 @@ const annulledMovements = async (req, res) => {
         if (gastoAnulacion && gastoAnulacion > ultimoSaldo) {
             return res.status(400).json({
                 success: false,
-                message: "No se puede anular porque generaría saldo negativo",
+                message: "¡No se puede anular porque generaría saldo negativo!",
             });
         }
         const nuevoSaldo = ultimoSaldo + (ingresoAnulacion || 0) - (gastoAnulacion || 0);
@@ -81,7 +82,7 @@ const annulledMovements = async (req, res) => {
             .from("movements")
             .insert([
             {
-                date: new Date(),
+                date: inputDate,
                 numReg: nuevoNumReg,
                 description: descripcionFinal,
                 type: "anulacion",
