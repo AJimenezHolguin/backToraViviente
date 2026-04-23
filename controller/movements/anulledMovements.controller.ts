@@ -41,6 +41,10 @@ export const annulledMovements: RequestHandler = async (
       });
     }
 
+    const inputDate = new Date(
+      new Date().toLocaleString("en-US", { timeZone: "America/Bogota" })
+    );
+
     if (original.state === "anulado") {
       return res.status(400).json({
         success: false,
@@ -84,7 +88,7 @@ export const annulledMovements: RequestHandler = async (
     if (gastoAnulacion && gastoAnulacion > ultimoSaldo) {
       return res.status(400).json({
         success: false,
-        message: "No se puede anular porque generaría saldo negativo",
+        message: "¡No se puede anular porque generaría saldo negativo!",
       });
     }
 
@@ -99,7 +103,7 @@ export const annulledMovements: RequestHandler = async (
       .from("movements")
       .insert([
         {
-          date: new Date(),
+          date: inputDate,
           numReg: nuevoNumReg,
           description: descripcionFinal,
           type: "anulacion",

@@ -49,6 +49,13 @@ const createAdjustment = async (req, res) => {
             });
         }
         const inputDate = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Bogota" }));
+        if (original.type === "anulacion") {
+            return res.status(400).json({
+                success: false,
+                message: "¡No es posible ajustar un registro de tipo anulación!",
+            });
+        }
+        ;
         if (original.state === "anulado") {
             return res.status(400).json({
                 success: false,
@@ -72,7 +79,7 @@ const createAdjustment = async (req, res) => {
         if (type === "gasto" && montoNumerico > ultimoSaldo) {
             return res.status(400).json({
                 success: false,
-                message: "Saldo insuficiente",
+                message: "¡No es posible ajustar el asiento contable por Saldo insuficiente!",
             });
         }
         const nuevoSaldo = type === "ingreso"
