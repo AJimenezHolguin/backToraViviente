@@ -7,7 +7,7 @@ export class PlaylistService {
   //
   static async getAll(req: Request) {
     return await QueryService.executeQuery(req, playlistModel, {
-      defaultSortField: "name",
+      defaultSortField: "createdAt",
 
       populate: [{ path: "songs" }, { path: "createdBy", select: "name" }],
 
@@ -19,7 +19,7 @@ export class PlaylistService {
 
   static async getByUser(req: Request, userId: string) {
     return await QueryService.executeQuery(req, playlistModel, {
-      defaultSortField: "name",
+      defaultSortField: "createdAt",
       userId,
       userField: "createdBy",
 
