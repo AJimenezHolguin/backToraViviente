@@ -11,7 +11,7 @@ class PlaylistService {
     //
     static async getAll(req) {
         return await queryService_1.QueryService.executeQuery(req, playList_model_1.default, {
-            defaultSortField: "name",
+            defaultSortField: "createdAt",
             populate: [{ path: "songs" }, { path: "createdBy", select: "name" }],
             filters: (query, req) => {
                 return (0, playlistSearch_helper_1.applyPlaylistSearch)(query, req.query.search);
@@ -20,7 +20,7 @@ class PlaylistService {
     }
     static async getByUser(req, userId) {
         return await queryService_1.QueryService.executeQuery(req, playList_model_1.default, {
-            defaultSortField: "name",
+            defaultSortField: "createdAt",
             userId,
             userField: "createdBy",
             populate: [{ path: "songs" }, { path: "createdBy", select: "name" }],
