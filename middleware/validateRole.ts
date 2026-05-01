@@ -1,15 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { Roles } from "../types/auth";
-// Ajusta la ruta según tu estructura de carpetas
 
-/**
- * Middleware para validar el rol del usuario
- * @param allowedRoles Roles permitidos para acceder a la ruta
- */
 export const validateRole = (allowedRoles: Roles[]) => {
   return (req: Request, res: Response, next: NextFunction): void => {
     try {
-      const userRole = req.user?.role; // Asegúrate de que el middleware de autenticación agrega el rol del usuario
+      const userRole = req.user?.role;
       if (!userRole) {
         res.status(401).json({ message: "No autorizado - Rol no encontrado" });
         return;
