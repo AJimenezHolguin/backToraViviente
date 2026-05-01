@@ -11,22 +11,22 @@ import { getPlaylistById } from "../controller/playList/getPlaylistById.controll
 
 const router = Router();
 
-router.post(`/playlists`, authMiddleware, validateRole([Roles.Admin]), (req, res, next) => {
+router.post(`/playlists`, authMiddleware, validateRole([Roles.Admin, Roles.Musician]), (req, res, next) => {
     createPlaylist(req, res).catch(next);
 });
 router.get(`/playlists`, authMiddleware, (req, res, next) => {
     allsPlaylist(req, res).catch(next);
 });
-router.get(`/playlists/user`, authMiddleware, validateRole([Roles.Admin]), (req, res, next) => {
+router.get(`/playlists/user`, authMiddleware, validateRole([Roles.Admin, Roles.Musician]), (req, res, next) => {
     userPlaylist(req, res).catch(next);
 });
 router.get(`/playlists/:playlistId`, authMiddleware, (req, res, next) => {
     getPlaylistById(req, res, next);
 });
-router.put(`/playlists/:playlistId`, authMiddleware, validateRole([Roles.Admin]), (req, res, next) => {
+router.put(`/playlists/:playlistId`, authMiddleware, validateRole([Roles.Admin, Roles.Musician]), (req, res, next) => {
     updatePlaylist(req, res).catch(next);
 });
-router.delete(`/playlists/:playlistId`, authMiddleware, validateRole([Roles.Admin]), (req, res, next) => {
+router.delete(`/playlists/:playlistId`, authMiddleware, validateRole([Roles.Admin, Roles.Musician]), (req, res, next) => {
     deletePlaylist(req, res).catch(next);
 });
 
