@@ -3,7 +3,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateRole = void 0;
 const dotenv_1 = __importDefault(require("dotenv"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 dotenv_1.default.config();
@@ -16,31 +15,16 @@ const authMiddleware = (req, res, next) => {
     }
     try {
         const verified = jsonwebtoken_1.default.verify(token, SECRET_KEY);
-        req.user = { _id: verified.id, role: verified.role, name: verified.name, email: verified.email }; // Incluye el ID y el rol del usuario en la solicitud
+        req.user = {
+            _id: verified.id,
+            role: verified.role,
+            name: verified.name,
+            email: verified.email,
+        };
         next();
     }
     catch (error) {
         res.status(401).json({ message: "Token inválido o expirado" });
     }
 };
-/**
- * Middleware para validar roles específicos
- * @param allowedRoles Roles permitidos para acceder a la ruta
- */
-const validateRole = (allowedRoles) => {
-    return (req, res, next) => {
-        if (!req.user) {
-            res
-                .status(401)
-                .json({ message: "No autorizado - Usuario no autenticado" });
-            return;
-        }
-        if (!allowedRoles.includes(req.user.role)) {
-            res.status(403).json({ message: "Acceso denegado - Rol no permitido" });
-            return;
-        }
-        next();
-    };
-};
-exports.validateRole = validateRole;
 exports.default = authMiddleware;

@@ -1,15 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateRole = void 0;
-// Ajusta la ruta según tu estructura de carpetas
-/**
- * Middleware para validar el rol del usuario
- * @param allowedRoles Roles permitidos para acceder a la ruta
- */
 const validateRole = (allowedRoles) => {
     return (req, res, next) => {
         try {
-            const userRole = req.user?.role; // Asegúrate de que el middleware de autenticación agrega el rol del usuario
+            const userRole = req.user?.role;
             if (!userRole) {
                 res.status(401).json({ message: "No autorizado - Rol no encontrado" });
                 return;

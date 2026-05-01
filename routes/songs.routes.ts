@@ -18,14 +18,14 @@ const router = Router();
 router.post(
   `/songs/create`,
   authMiddleware,
-  validateRole([Roles.Admin]),
+  validateRole([Roles.Admin, Roles.Musician]),
   createSong
 );
 
 router.get(
   `/songs/user`,
   authMiddleware,
-  validateRole([Roles.Admin]),
+  validateRole([Roles.Admin, Roles.Musician]),
   getSongsValidation,
   handlePaginationValidation,
   getSongsByUser
@@ -43,13 +43,13 @@ router.get(`/songs/:id`, authMiddleware, getSongById);
 router.delete(
   `/songs/:id`,
   authMiddleware,
-  validateRole([Roles.Admin]),
+  validateRole([Roles.Admin, Roles.Musician]),
   deleteMySong
 );
 router.put(
   `/songs/:id`,
   authMiddleware,
-  validateRole([Roles.Admin]),
+  validateRole([Roles.Admin, Roles.Musician]),
   updateMySong
 );
 

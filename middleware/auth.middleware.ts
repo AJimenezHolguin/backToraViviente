@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
-import { Roles } from "../types/auth"; // Ajusta la ruta según tu estructura
+import { Roles } from "../types/auth"; 
 
 dotenv.config();
 const SECRET_KEY = process.env.JWT_SECRET as string;
@@ -9,7 +9,7 @@ const SECRET_KEY = process.env.JWT_SECRET as string;
 export interface AuthRequest extends Request {
   user?: {
     _id: string;
-    name?: string
+    name?: string;
     email?: string;
     role: Roles;
   };
@@ -20,8 +20,8 @@ const authMiddleware = (
   res: Response,
   next: NextFunction
 ): void => {
-  const token = req.header("Authorization")?.split(" ")[1]; 
-  
+  const token = req.header("Authorization")?.split(" ")[1];
+
   if (!token) {
     res.status(401).json({ message: "No autorizado - Token faltante" });
     return;
@@ -34,33 +34,16 @@ const authMiddleware = (
       email: string;
       role: Roles;
     };
-    req.user = { _id: verified.id, role: verified.role, name: verified.name, email: verified.email }; // Incluye el ID y el rol del usuario en la solicitud
+    req.user = {
+      _id: verified.id,
+      role: verified.role,
+      name: verified.name,
+      email: verified.email,
+    }; 
     next();
   } catch (error) {
     res.status(401).json({ message: "Token inválido o expirado" });
   }
-};
-
-/**
- * Middleware para validar roles específicos
- * @param allowedRoles Roles permitidos para acceder a la ruta
- */
-export const validateRole = (allowedRoles: Roles[]) => {
-  return (req: AuthRequest, res: Response, next: NextFunction): void => {
-    if (!req.user) {
-      res
-        .status(401)
-        .json({ message: "No autorizado - Usuario no autenticado" });
-      return;
-    }
-
-    if (!allowedRoles.includes(req.user.role)) {
-      res.status(403).json({ message: "Acceso denegado - Rol no permitido" });
-      return;
-    }
-  
-    next();
-  };
 };
 
 export default authMiddleware;
