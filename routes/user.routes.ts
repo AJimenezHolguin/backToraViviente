@@ -8,6 +8,8 @@ import { registerUserByAdmin } from "../controller/User/registerUserByAdmin.cont
 import { validateRole } from "../middleware/validateRole";
 import { Roles } from "../types/auth";
 import { validatePasswordChange } from "../middleware/validatePasswordChange";
+import { changePassword } from "../controller/User/changePassword.controller";
+import { resetPasswordByAdmin } from "../controller/User/resetPasswordByAdmin.controller";
 
 const router = Router();
 
@@ -20,7 +22,22 @@ router.post(
 );
 
 router.post("/auth/register-public", registerUserPublic);
+
+router.put(
+  "/auth/change-password",
+  authMiddleware,
+  changePassword
+)
+
 router.post("/auth/login", login);
+
+router.put(
+  "/admin/users/reset-password",
+  authMiddleware,
+  validatePasswordChange,
+  validateRole([Roles.Admin]),
+  resetPasswordByAdmin
+)
 
 router.get(
   "/users",
@@ -37,5 +54,6 @@ router.delete(
   validateRole([Roles.Admin]),
   deleteUser
 );
+
 
 export default router;
