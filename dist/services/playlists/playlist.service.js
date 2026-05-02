@@ -12,7 +12,14 @@ class PlaylistService {
     static async getAll(req) {
         return await queryService_1.QueryService.executeQuery(req, playList_model_1.default, {
             defaultSortField: "createdAt",
-            populate: [{ path: "songs" }, { path: "createdBy", select: "name" }],
+            populate: [
+                { path: "songs" },
+                {
+                    path: "createdBy",
+                    match: { isActive: true },
+                    select: "name email"
+                }
+            ],
             filters: (query, req) => {
                 return (0, playlistSearch_helper_1.applyPlaylistSearch)(query, req.query.search);
             },

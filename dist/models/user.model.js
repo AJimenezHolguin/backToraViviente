@@ -45,6 +45,8 @@ const UserSchema = new mongoose_1.Schema({
         enum: Object.values(auth_1.Roles),
         default: auth_1.Roles.User,
     },
+    isActive: { type: Boolean, default: true },
+    mustChangePassword: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
     playlists: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Playlist" }],

@@ -11,7 +11,13 @@ class SongService {
     static async getAll(req) {
         const result = await queryService_1.QueryService.executeQuery(req, songs_model_1.default, {
             defaultSortField: "name",
-            populate: [{ path: "user", select: "name" }],
+            populate: [
+                {
+                    path: "user",
+                    match: { isActive: true },
+                    select: "name"
+                }
+            ],
             filters: (query, req) => {
                 return (0, songSearch_helper_1.applySongSearch)(query, req.query.search);
             },
