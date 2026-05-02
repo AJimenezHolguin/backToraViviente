@@ -3,13 +3,16 @@ import authMiddleware from "../middleware/auth.middleware";
 import { deleteUser } from "../controller/User/deletUser.controller";
 import { registerUserPublic } from "../controller/User/registerUserPublic.controller";
 import { login } from "../controller/User/login.controller";
-import { getUsers } from "../controller/User/getUsers.controller";
 import { registerUserByAdmin } from "../controller/User/registerUserByAdmin.controller";
 import { validateRole } from "../middleware/validateRole";
 import { Roles } from "../types/auth";
 import { validatePasswordChange } from "../middleware/validatePasswordChange";
 import { changePassword } from "../controller/User/changePassword.controller";
 import { resetPasswordByAdmin } from "../controller/User/resetPasswordByAdmin.controller";
+import { changeUserRole } from "../controller/User/changeUserRole.controller";
+import { getAllUsers } from "../controller/User/getAllUsers.controller";
+import { handlePaginationValidation, validatePaginationParams } from "../utils/pagination.validation";
+
 
 const router = Router();
 
@@ -40,11 +43,21 @@ router.put(
 )
 
 router.get(
-  "/users",
+  "/admin/users",
   authMiddleware,
   validatePasswordChange,
   validateRole([Roles.Admin]),
-  getUsers
+  validatePaginationParams,
+  handlePaginationValidation,
+  getAllUsers
+);
+
+router.put(
+  "/admin/users/change-role",
+  authMiddleware,
+  validatePasswordChange,
+  validateRole([Roles.Admin]),
+  changeUserRole
 );
 
 router.delete(
