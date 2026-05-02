@@ -1,6 +1,7 @@
 import { RequestHandler, Response } from "express";
-import { AuthRequest } from "../../middleware/auth.middleware";
+
 import supabase from "../../db/supabaseClient";
+import { AuthRequest } from "../../middleware/types";
 
 export const getNextMovementNumReg: RequestHandler = async (
   req: AuthRequest,

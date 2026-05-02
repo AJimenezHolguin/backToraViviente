@@ -1,7 +1,8 @@
 import { RequestHandler,Response } from 'express';
-import { AuthRequest } from '../../middleware/auth.middleware';
+
 import { Movements } from '../../types/movements';
 import supabase from '../../db/supabaseClient';
+import { AuthRequest } from '../../middleware/types';
 
 
 export const getMovementById:RequestHandler  = async (

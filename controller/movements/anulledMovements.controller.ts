@@ -1,7 +1,8 @@
 import { RequestHandler } from "express";
 import supabase from "../../db/supabaseClient";
-import { AuthRequest } from "../../middleware/auth.middleware";
+
 import { validateAccountingDate } from "../../utils/validateAccountingDate";
+import { AuthRequest } from "../../middleware/types";
 
 export const annulledMovements: RequestHandler = async (
   req: AuthRequest,

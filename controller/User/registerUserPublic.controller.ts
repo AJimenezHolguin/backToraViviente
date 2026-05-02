@@ -3,7 +3,7 @@ import User from "../../models/user.model";
 import { hashPassword, generateToken } from "../../services/auth.service";
 import { Roles } from "../../types/auth";
 
-export const registerPublic: RequestHandler = async (
+export const registerUserPublic: RequestHandler = async (
   req: Request,
   res: Response,
 ): Promise<void> => {

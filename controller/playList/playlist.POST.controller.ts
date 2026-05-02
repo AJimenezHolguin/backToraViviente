@@ -16,7 +16,7 @@ export const createPlaylist = async (req: Request, res: Response) => {
             return;
         }
 
-        // Populate the createdBy field with user details
+       
         const populatedPlaylist = await PlaylistModel.findById(savedPlaylist._id)
             .populate<{ createdBy: IUser }>({
                 path: 'createdBy',
