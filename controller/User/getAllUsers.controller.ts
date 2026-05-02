@@ -14,17 +14,25 @@ export const getAllUsers = async (
     const order = (req.query.order as "ASC" | "DESC") || "DESC";
     const sortBy = (req.query.sortBy as string) || "createdAt";
     const search = (req.query.search as string) || "";
+    
+    const isActiveQuery = req.query.isActive as string | undefined;
 
     const skip = (page - 1) * take;
 
-    const filter = search
-      ? {
-          $or: [
-            { name: { $regex: search, $options: "i" } },
-            { email: { $regex: search, $options: "i" } },
-          ],
-        }
-      : {};
+    let filter: any = {};
+
+    // 🔎 búsqueda
+    if (search) {
+      filter.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    // 🆕 filtro por estado
+    if (isActiveQuery !== undefined) {
+      filter.isActive = isActiveQuery === "true";
+    }
 
     const [users, total] = await Promise.all([
       User.find(filter)
@@ -42,6 +50,7 @@ export const getAllUsers = async (
       email: user.email,
       role: user.role,
       mustChangePassword: user.mustChangePassword,
+      isActive: user.isActive,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     }));

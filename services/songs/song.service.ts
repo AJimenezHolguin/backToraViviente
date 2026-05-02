@@ -8,7 +8,13 @@ export class SongService {
     const result = await QueryService.executeQuery(req, songsModel, {
       defaultSortField: "name",
 
-      populate: [{ path: "user", select: "name" }],
+      populate: [
+        {
+          path: "user",
+          match: { isActive: true },
+          select: "name"
+        }
+      ],
 
       filters: (query, req) => {
         return applySongSearch(query, req.query.search as string);

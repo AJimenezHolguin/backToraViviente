@@ -1,6 +1,5 @@
 import { Router } from "express";
 import authMiddleware from "../middleware/auth.middleware";
-import { deleteUser } from "../controller/User/deletUser.controller";
 import { registerUserPublic } from "../controller/User/registerUserPublic.controller";
 import { login } from "../controller/User/login.controller";
 import { registerUserByAdmin } from "../controller/User/registerUserByAdmin.controller";
@@ -12,6 +11,8 @@ import { resetPasswordByAdmin } from "../controller/User/resetPasswordByAdmin.co
 import { changeUserRole } from "../controller/User/changeUserRole.controller";
 import { getAllUsers } from "../controller/User/getAllUsers.controller";
 import { handlePaginationValidation, validatePaginationParams } from "../utils/pagination.validation";
+import { deactivateUser } from "../controller/User/deactivateUser.controller";
+import { reactivateUser } from "../controller/User/reactivateUser.controller";
 
 
 const router = Router();
@@ -60,12 +61,20 @@ router.put(
   changeUserRole
 );
 
+
 router.delete(
-  "/users/:id",
+  "/admin/users/:id",
   authMiddleware,
   validatePasswordChange,
   validateRole([Roles.Admin]),
-  deleteUser
+  deactivateUser
+);
+router.patch(
+  "/admin/users/:id/reactivate",
+  authMiddleware,
+  validatePasswordChange,
+  validateRole([Roles.Admin]),
+  reactivateUser
 );
 
 

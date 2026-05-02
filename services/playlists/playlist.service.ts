@@ -9,7 +9,14 @@ export class PlaylistService {
     return await QueryService.executeQuery(req, playlistModel, {
       defaultSortField: "createdAt",
 
-      populate: [{ path: "songs" }, { path: "createdBy", select: "name" }],
+      populate: [
+        { path: "songs" },
+        {
+          path: "createdBy",
+          match: { isActive: true },
+          select: "name email"
+        }
+      ],
 
       filters: (query, req) => {
         return applyPlaylistSearch(query, req.query.search as string);

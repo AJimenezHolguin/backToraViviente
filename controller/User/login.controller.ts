@@ -6,9 +6,12 @@ export const login: RequestHandler = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await userModel.findOne({ email });
+    const user = await userModel.findOne({
+       email,
+       isActive: true 
+      });
     if (!user) {
-      res.status(400).json({ message: "Usuario no encontrado" });
+      res.status(400).json({ message: "Usuario no encontrado o inactivo" });
       return;
     }
 
