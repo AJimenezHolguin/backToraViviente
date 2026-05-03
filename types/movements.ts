@@ -10,7 +10,7 @@ export interface Movements {
     state: string;             
     ref_id: string | null;
     user_uuid: string;
-    user_name: string;
-    user_email: string;
+    user_name: string | null;
+    user_email: string | null;
     created_at: string;         
   }

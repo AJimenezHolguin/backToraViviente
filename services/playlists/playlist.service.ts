@@ -13,8 +13,7 @@ export class PlaylistService {
         { path: "songs" },
         {
           path: "createdBy",
-          match: { isActive: true },
-          select: "name email"
+          select: "name email isActive",
         }
       ],
 
@@ -30,7 +29,13 @@ export class PlaylistService {
       userId,
       userField: "createdBy",
 
-      populate: [{ path: "songs" }, { path: "createdBy", select: "name" }],
+      populate: [
+        { path: "songs" }, 
+        
+        { path: "createdBy", 
+          select: "name email isActive"
+        }
+      ],
 
       filters: (query, req) => {
         return applyPlaylistSearch(query, req.query.search as string);

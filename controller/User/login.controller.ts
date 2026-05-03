@@ -11,7 +11,7 @@ export const login: RequestHandler = async (req, res) => {
        isActive: true 
       });
     if (!user) {
-      res.status(400).json({ message: "Usuario no encontrado o inactivo" });
+      res.status(400).json({ message: "Credenciales inválidas" });
       return;
     }
 
