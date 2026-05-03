@@ -16,8 +16,7 @@ class PlaylistService {
                 { path: "songs" },
                 {
                     path: "createdBy",
-                    match: { isActive: true },
-                    select: "name email"
+                    select: "name email isActive",
                 }
             ],
             filters: (query, req) => {
@@ -30,7 +29,12 @@ class PlaylistService {
             defaultSortField: "createdAt",
             userId,
             userField: "createdBy",
-            populate: [{ path: "songs" }, { path: "createdBy", select: "name" }],
+            populate: [
+                { path: "songs" },
+                { path: "createdBy",
+                    select: "name email isActive"
+                }
+            ],
             filters: (query, req) => {
                 return (0, playlistSearch_helper_1.applyPlaylistSearch)(query, req.query.search);
             },

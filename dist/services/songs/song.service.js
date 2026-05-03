@@ -14,8 +14,7 @@ class SongService {
             populate: [
                 {
                     path: "user",
-                    match: { isActive: true },
-                    select: "name"
+                    select: "name email isActive"
                 }
             ],
             filters: (query, req) => {
@@ -26,7 +25,8 @@ class SongService {
             ...result,
             data: result.data.map((song) => ({
                 ...song,
-                userName: song.user?.name || "N/A",
+                userName: song.user?.name,
+                isActive: song.user?.isActive,
                 user: undefined,
             })),
         };
@@ -36,7 +36,11 @@ class SongService {
             defaultSortField: "name",
             userId,
             userField: "user",
-            populate: [{ path: "user", select: "name" }],
+            populate: [
+                { path: "user",
+                    select: "name email isActive"
+                }
+            ],
             filters: (query, req) => {
                 return (0, songSearch_helper_1.applySongSearch)(query, req.query.search);
             },
@@ -45,7 +49,8 @@ class SongService {
             ...result,
             data: result.data.map((song) => ({
                 ...song,
-                userName: song.user?.name || "N/A",
+                userName: song.user?.name,
+                isActive: song.user?.isActive,
                 user: undefined,
             })),
         };

@@ -14,7 +14,7 @@ const login = async (req, res) => {
             isActive: true
         });
         if (!user) {
-            res.status(400).json({ message: "Usuario no encontrado o inactivo" });
+            res.status(400).json({ message: "Credenciales inválidas" });
             return;
         }
         const isMatch = await (0, auth_service_1.comparePasswords)(password, user.password);

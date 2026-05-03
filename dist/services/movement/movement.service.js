@@ -7,9 +7,10 @@ exports.MovementService = void 0;
 const supabaseQueryService_1 = require("../supabaseQueryService");
 const supabaseClient_1 = __importDefault(require("../../db/supabaseClient"));
 const movementSearch_helper_1 = require("../../utils/helpers/movementSearch.helper");
+const user_model_1 = __importDefault(require("../../models/user.model"));
 class MovementService {
     static async getAll(req) {
-        return await supabaseQueryService_1.SupabaseQueryService.executeQuery(req, supabaseClient_1.default, {
+        const result = await supabaseQueryService_1.SupabaseQueryService.executeQuery(req, supabaseClient_1.default, {
             table: "movements",
             defaultSortField: "numReg",
             filters: (query, req) => {
@@ -34,6 +35,19 @@ class MovementService {
                 return query;
             },
         });
+        const userIds = Array.from(new Set(result.data.map((m) => m.user_uuid).filter(Boolean)));
+        const users = await user_model_1.default
+            .find({ _id: { $in: userIds } })
+            .select("_id isActive");
+        const userMap = new Map(users.map((u) => [String(u._id), u.isActive]));
+        const enrichedData = result.data.map((movement) => ({
+            ...movement,
+            user_active: userMap.get(movement.user_uuid) ?? false,
+        }));
+        return {
+            ...result,
+            data: enrichedData,
+        };
     }
 }
 exports.MovementService = MovementService;
