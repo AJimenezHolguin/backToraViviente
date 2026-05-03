@@ -12,5 +12,6 @@ export interface Movements {
     user_uuid: string;
     user_name: string | null;
     user_email: string | null;
+    user_active: boolean; 
     created_at: string;         
   }
