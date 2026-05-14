@@ -13,23 +13,24 @@ const userPlaylist_GET_controller_1 = require("../controller/playList/userPlayli
 const updatePlaylist_controller_1 = require("../controller/playList/updatePlaylist.controller");
 const deletePlaylist_controller_1 = require("../controller/playList/deletePlaylist.controller");
 const getPlaylistById_controller_1 = require("../controller/playList/getPlaylistById.controller");
+const validatePasswordChange_1 = require("../middleware/validatePasswordChange");
 const router = (0, express_1.Router)();
-router.post(`/playlists`, auth_middleware_1.default, (0, validateRole_1.validateRole)([auth_1.Roles.Admin, auth_1.Roles.Musician]), (req, res, next) => {
+router.post(`/playlists`, auth_middleware_1.default, validatePasswordChange_1.validatePasswordChange, (0, validateRole_1.validateRole)([auth_1.Roles.Admin, auth_1.Roles.Musician]), (req, res, next) => {
     (0, playlist_POST_controller_1.createPlaylist)(req, res).catch(next);
 });
-router.get(`/playlists`, auth_middleware_1.default, (req, res, next) => {
+router.get(`/playlists`, auth_middleware_1.default, validatePasswordChange_1.validatePasswordChange, (req, res, next) => {
     (0, allsPlaylist_GET_controller_1.allsPlaylist)(req, res).catch(next);
 });
-router.get(`/playlists/user`, auth_middleware_1.default, (0, validateRole_1.validateRole)([auth_1.Roles.Admin, auth_1.Roles.Musician]), (req, res, next) => {
+router.get(`/playlists/user`, auth_middleware_1.default, validatePasswordChange_1.validatePasswordChange, (0, validateRole_1.validateRole)([auth_1.Roles.Admin, auth_1.Roles.Musician]), (req, res, next) => {
     (0, userPlaylist_GET_controller_1.userPlaylist)(req, res).catch(next);
 });
-router.get(`/playlists/:playlistId`, auth_middleware_1.default, (req, res, next) => {
+router.get(`/playlists/:playlistId`, auth_middleware_1.default, validatePasswordChange_1.validatePasswordChange, (req, res, next) => {
     (0, getPlaylistById_controller_1.getPlaylistById)(req, res, next);
 });
-router.put(`/playlists/:playlistId`, auth_middleware_1.default, (0, validateRole_1.validateRole)([auth_1.Roles.Admin, auth_1.Roles.Musician]), (req, res, next) => {
+router.put(`/playlists/:playlistId`, auth_middleware_1.default, validatePasswordChange_1.validatePasswordChange, (0, validateRole_1.validateRole)([auth_1.Roles.Admin, auth_1.Roles.Musician]), (req, res, next) => {
     (0, updatePlaylist_controller_1.updatePlaylist)(req, res).catch(next);
 });
-router.delete(`/playlists/:playlistId`, auth_middleware_1.default, (0, validateRole_1.validateRole)([auth_1.Roles.Admin, auth_1.Roles.Musician]), (req, res, next) => {
+router.delete(`/playlists/:playlistId`, auth_middleware_1.default, validatePasswordChange_1.validatePasswordChange, (0, validateRole_1.validateRole)([auth_1.Roles.Admin, auth_1.Roles.Musician]), (req, res, next) => {
     (0, deletePlaylist_controller_1.deletePlaylist)(req, res).catch(next);
 });
 exports.default = router;

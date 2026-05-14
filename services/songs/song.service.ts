@@ -8,7 +8,12 @@ export class SongService {
     const result = await QueryService.executeQuery(req, songsModel, {
       defaultSortField: "name",
 
-      populate: [{ path: "user", select: "name" }],
+      populate: [
+        {
+          path: "user",
+          select: "name email isActive"
+        }
+      ],
 
       filters: (query, req) => {
         return applySongSearch(query, req.query.search as string);
@@ -19,7 +24,8 @@ export class SongService {
       ...result,
       data: result.data.map((song: any) => ({
         ...song,
-        userName: song.user?.name || "N/A",
+        userName: song.user?.name,
+        isActive: song.user?.isActive,
         user: undefined,
       })),
     };
@@ -31,7 +37,11 @@ export class SongService {
       userId,
       userField: "user",
 
-      populate: [{ path: "user", select: "name" }],
+      populate: [
+        { path: "user",
+          select: "name email isActive" 
+        }
+      ],
 
       filters: (query, req) => {
         return applySongSearch(query, req.query.search as string);
@@ -42,7 +52,8 @@ export class SongService {
       ...result,
       data: result.data.map((song: any) => ({
         ...song,
-        userName: song.user?.name || "N/A",
+        userName: song.user?.name,
+        isActive: song.user?.isActive,
         user: undefined,
       })),
     };

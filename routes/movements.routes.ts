@@ -8,12 +8,14 @@ import { createAdjustment } from '../controller/movements/createAdjustment.contr
 import { annulledMovements } from "../controller/movements/anulledMovements.controller";
 import { getMovementById } from '../controller/movements/getMovementById.controller';
 import { getNextMovementNumReg } from "../controller/movements/getNextMovementNumReg.controller";
+import { validatePasswordChange } from "../middleware/validatePasswordChange";
 
 const router = Router();
 
 router.post(
   `/movements/create`,
   authMiddleware,
+  validatePasswordChange,
   validateRole([Roles.Admin]),
   createMovements
 );
@@ -21,6 +23,7 @@ router.post(
 router.get(
   `/movements`,
   authMiddleware,
+  validatePasswordChange,
   validateRole([Roles.Admin]),
   getAllMovements
 );
@@ -28,6 +31,7 @@ router.get(
 router.get(
   `/movements/next-num-reg`,
   authMiddleware,
+  validatePasswordChange,
   validateRole([Roles.Admin]),
   getNextMovementNumReg 
 );
@@ -35,6 +39,7 @@ router.get(
 router.get(
   `/movements/:id`,
   authMiddleware,
+  validatePasswordChange,
   validateRole([Roles.Admin]),
   getMovementById
 );
@@ -43,6 +48,7 @@ router.get(
 router.post(
   `/movements/adjust/:id`,
   authMiddleware,
+  validatePasswordChange,
   validateRole([Roles.Admin]),
   createAdjustment
 );
@@ -50,6 +56,7 @@ router.post(
 router.patch(
   `/movements/anulled/:id`,
   authMiddleware,
+  validatePasswordChange,
   validateRole([Roles.Admin]),
   annulledMovements
 )

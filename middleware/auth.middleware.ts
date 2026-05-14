@@ -1,19 +1,11 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import { Roles } from "../types/auth"; 
+import { AuthRequest } from "./types";
 
 dotenv.config();
 const SECRET_KEY = process.env.JWT_SECRET as string;
-
-export interface AuthRequest extends Request {
-  user?: {
-    _id: string;
-    name?: string;
-    email?: string;
-    role: Roles;
-  };
-}
 
 const authMiddleware = (
   req: AuthRequest,
