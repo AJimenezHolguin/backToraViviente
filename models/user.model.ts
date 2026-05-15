@@ -13,7 +13,9 @@ export interface IUser extends Document {
   createdAt?: Date;
   updatedAt?: Date;
   playlists?: mongoose.Types.ObjectId[];
-  id?: string; // Optional, if you want to use it as a virtual field
+  id?: string; 
+  mustChangePassword: boolean;
+  isActive?: boolean;
 }
 
 
@@ -26,6 +28,8 @@ const UserSchema = new Schema<IUser>({
     enum: Object.values(Roles), 
     default: Roles.User, 
   },
+  isActive: { type: Boolean, default: true },
+  mustChangePassword: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   playlists: [{ type: Schema.Types.ObjectId, ref: "Playlist" }], 

@@ -15,7 +15,6 @@ const createPlaylist = async (req, res) => {
             res.status(400).json({ message: "Error al crear la playlist" });
             return;
         }
-        // Populate the createdBy field with user details
         const populatedPlaylist = await playList_model_1.default.findById(savedPlaylist._id)
             .populate({
             path: 'createdBy',
